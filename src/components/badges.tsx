@@ -81,6 +81,16 @@ export function CompanyLabel({
   );
 }
 
+/**
+ * Urgency colors for deadline/follow-up badges: red for overdue or within
+ * 3 days, amber for 4-7 days, neutral beyond that.
+ */
+export function urgencyStyle(daysRemaining: number): string {
+  if (daysRemaining <= 3) return "bg-red-600 text-white";
+  if (daysRemaining <= 7) return "bg-amber-400 text-amber-950";
+  return "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300";
+}
+
 const TIER_STYLES: Record<string, string> = {
   A: "bg-yellow-100 text-yellow-800 ring-1 ring-inset ring-yellow-400/40 dark:bg-yellow-950 dark:text-yellow-300",
   B: "bg-zinc-200 text-zinc-700 ring-1 ring-inset ring-zinc-400/40 dark:bg-zinc-700 dark:text-zinc-200",

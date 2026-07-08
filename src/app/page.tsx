@@ -4,6 +4,7 @@ import {
   CompanyLabel,
   STATUS_LABELS,
   STATUS_STYLES,
+  urgencyStyle,
 } from "@/components/badges";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
@@ -66,16 +67,6 @@ function StatusBreakdown({
       ))}
     </ul>
   );
-}
-
-/**
- * Urgency colors for deadline/follow-up badges: red for overdue or within
- * 3 days, amber for 4-7 days out, neutral beyond that.
- */
-function urgencyStyle(daysRemaining: number): string {
-  if (daysRemaining <= 3) return "bg-red-600 text-white";
-  if (daysRemaining <= 7) return "bg-amber-400 text-amber-950";
-  return "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300";
 }
 
 function DaysRemaining({ days }: { days: number }) {

@@ -9,6 +9,7 @@ import { applications, companies, contacts } from "@/db/schema";
 
 export type CompanyFormState = {
   error: string | null;
+  success?: boolean;
 };
 
 const DREAM_TIERS = ["A", "B", "C"] as const;
@@ -45,7 +46,7 @@ export async function createCompany(
   await db.insert(companies).values(fields);
 
   revalidatePath("/companies");
-  redirect("/companies");
+  return { error: null, success: true };
 }
 
 export async function updateCompany(
@@ -62,7 +63,7 @@ export async function updateCompany(
 
   revalidatePath("/companies");
   revalidatePath(`/companies/${id}`);
-  redirect(`/companies/${id}`);
+  return { error: null, success: true };
 }
 
 export async function deleteCompany(id: number): Promise<void> {

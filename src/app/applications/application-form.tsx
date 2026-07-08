@@ -1,0 +1,202 @@
+"use client";
+
+import { useActionState, useEffect } from "react";
+
+import {
+  INPUT_CLASSES,
+  LABEL_CLASSES,
+  PRIMARY_BUTTON_CLASSES,
+  SECONDARY_BUTTON_CLASSES,
+} from "@/components/form";
+
+import type { ApplicationFormState } from "./actions";
+
+export type CompanyOption = {
+  id: number;
+  name: string;
+};
+
+export type ApplicationFormValues = {
+  companyId: number | null;
+  roleTitle: string;
+  type: string | null;
+  location: string | null;
+  deadline: string | null;
+  status: string;
+  resumeVersion: string | null;
+  notes: string | null;
+};
+
+export function ApplicationForm({
+  action,
+  initial,
+  companies,
+  submitLabel,
+  onClose,
+}: {
+  action: (
+    prevState: ApplicationFormState,
+    formData: FormData,
+  ) => Promise<ApplicationFormState>;
+  initial?: ApplicationFormValues;
+  companies: CompanyOption[];
+  submitLabel: string;
+  onClose?: () => void;
+}) {
+  const [state, formAction, pending] = useActionState(action, {
+    error: null,
+  });
+
+  useEffect(() => {
+    if (state.success) onClose?.();
+  }, [state, onClose]);
+
+  return (
+    <form action={formAction} className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label htmlFor="app-role" className={LABEL_CLASSES}>
+            Role Title <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="app-role"
+            name="roleTitle"
+            required
+            defaultValue={initial?.roleTitle ?? ""}
+            placeholder="e.g. Software Engineer Intern"
+            className={INPUT_CLASSES}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="app-company" className={LABEL_CLASSES}>
+            Company
+          </label>
+          <select
+            id="app-company"
+            name="companyId"
+            defaultValue={initial?.companyId ?? ""}
+            className={INPUT_CLASSES}
+          >
+            <option value="">No company</option>
+            {companies.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="app-type" className={LABEL_CLASSES}>
+            Type
+          </label>
+          <select
+            id="app-type"
+            name="type"
+            defaultValue={initial?.type ?? ""}
+            className={INPUT_CLASSES}
+          >
+            <option value="">Not specified</option>
+            <option value="internship">Internship</option>
+            <option value="new_grad">New grad</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="app-location" className={LABEL_CLASSES}>
+            Location
+          </label>
+          <input
+            id="app-location"
+            name="location"
+            defaultValue={initial?.location ?? ""}
+            placeholder="e.g. New York, NY"
+            className={INPUT_CLASSES}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="app-deadline" className={LABEL_CLASSES}>
+            Deadline
+          </label>
+          <input
+            id="app-deadline"
+            name="deadline"
+            type="date"
+            defaultValue={initial?.deadline ?? ""}
+            className={INPUT_CLASSES}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="app-status" className={LABEL_CLASSES}>
+            Status
+          </label>
+          <select
+            id="app-status"
+            name="status"
+            defaultValue={initial?.status ?? "not_started"}
+            className={INPUT_CLASSES}
+          >
+            <option value="not_started">Not started</option>
+            <option value="applied">Applied</option>
+            <option value="interviewing">Interviewing</option>
+            <option value="offer">Offer</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="app-resume" className={LABEL_CLASSES}>
+            Resume Version
+          </label>
+          <input
+            id="app-resume"
+            name="resumeVersion"
+            defaultValue={initial?.resumeVersion ?? ""}
+            placeholder="e.g. v2-backend"
+            className={INPUT_CLASSES}
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label htmlFor="app-notes" className={LABEL_CLASSES}>
+            Notes
+          </label>
+          <textarea
+            id="app-notes"
+            name="notes"
+            rows={3}
+            defaultValue={initial?.notes ?? ""}
+            placeholder="Referral status, interview prep, next steps…"
+            className={INPUT_CLASSES}
+          />
+        </div>
+      </div>
+
+      {state.error && (
+        <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>
+      )}
+
+      <div className="flex items-center gap-2">
+        <button
+          type="submit"
+          disabled={pending}
+          className={PRIMARY_BUTTON_CLASSES}
+        >
+          {pending ? "Saving…" : submitLabel}
+        </button>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className={SECONDARY_BUTTON_CLASSES}
+          >
+            Cancel
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}

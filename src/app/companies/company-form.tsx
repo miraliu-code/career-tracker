@@ -1,11 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+
+import { INPUT_CLASSES } from "@/components/form";
 
 import type { CompanyFormState } from "./actions";
-
-const INPUT_CLASSES =
-  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 dark:placeholder:text-zinc-500";
 
 export type CompanyFormValues = {
   name: string;
@@ -32,6 +31,10 @@ export function CompanyForm({
   const [state, formAction, pending] = useActionState(action, {
     error: null,
   });
+
+  useEffect(() => {
+    if (state.success) onCancel?.();
+  }, [state, onCancel]);
 
   return (
     <form action={formAction} className="space-y-4">

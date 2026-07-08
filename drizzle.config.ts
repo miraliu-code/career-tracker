@@ -10,6 +10,6 @@ export default defineConfig({
   dialect: "postgresql",
   dbCredentials: {
     // Required for `drizzle-kit migrate/push/studio`; `generate` works without it.
-    url: process.env.POSTGRES_URL!,
+    url: (process.env.POSTGRES_URL ?? process.env.DATABASE_URL)!,
   },
 });

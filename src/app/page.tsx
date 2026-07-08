@@ -41,6 +41,33 @@ const STATUS_STYLES: Record<string, string> = {
   rejected: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
 };
 
+const INDUSTRY_DOTS = {
+  consulting: "bg-blue-500",
+  tech: "bg-green-500",
+  communications: "bg-purple-500",
+  international: "bg-yellow-500",
+  consumer: "bg-orange-500",
+  other: "bg-zinc-400 dark:bg-zinc-500",
+} as const;
+
+type IndustryCategory = keyof typeof INDUSTRY_DOTS;
+
+const INDUSTRY_KEYWORDS: [IndustryCategory, RegExp][] = [
+  ["consulting", /consult/],
+  ["tech", /tech|software|ai|engineering|observability|design|fintech|saas|cloud|data/],
+  ["communications", /communic|media|marketing|journal|public relations/],
+  ["international", /international|global|diplomacy|foreign/],
+  ["consumer", /consumer|retail|commerce|cpg|hospitality/],
+];
+
+function industryCategory(industry: string | null): IndustryCategory {
+  const normalized = (industry ?? "").toLowerCase();
+  for (const [category, pattern] of INDUSTRY_KEYWORDS) {
+    if (pattern.test(normalized)) return category;
+  }
+  return "other";
+}
+
 /** Parse a Postgres `date` string (YYYY-MM-DD) as UTC midnight. */
 function parseDate(value: string): Date {
   return new Date(`${value}T00:00:00Z`);
@@ -82,11 +109,30 @@ function countByStatus<T extends { status: string | null }>(
 type DeadlineItem = {
   key: string;
   title: string;
-  company: string | null;
+  company: { name: string; industry: string | null } | null;
+  eligibilityTags: string[] | null;
   kind: "application" | "funding";
   deadline: string;
   daysRemaining: number;
 };
+
+function CompanyLabel({
+  name,
+  industry,
+}: {
+  name: string;
+  industry: string | null;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span
+        aria-hidden
+        className={`size-2 shrink-0 rounded-full ${INDUSTRY_DOTS[industryCategory(industry)]}`}
+      />
+      {name}
+    </span>
+  );
+}
 
 function StatusBreakdown({
   counts,
@@ -110,18 +156,22 @@ function StatusBreakdown({
   );
 }
 
+/**
+ * Urgency colors for deadline/follow-up badges: red for overdue or within
+ * 3 days, amber for 4-7 days out, neutral beyond that.
+ */
+function urgencyStyle(daysRemaining: number): string {
+  if (daysRemaining <= 3) return "bg-red-600 text-white";
+  if (daysRemaining <= 7) return "bg-amber-400 text-amber-950";
+  return "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300";
+}
+
 function DaysRemaining({ days }: { days: number }) {
   const label =
     days === 0 ? "Due today" : days === 1 ? "1 day left" : `${days} days left`;
-  const style =
-    days <= 3
-      ? "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300"
-      : days <= 7
-        ? "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
-        : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400";
   return (
     <span
-      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${style}`}
+      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${urgencyStyle(days)}`}
     >
       {label}
     </span>
@@ -137,7 +187,7 @@ export default async function DashboardPage() {
       db.query.companies.findMany(),
     ]);
 
-  const companyName = new Map(allCompanies.map((c) => [c.id, c.name]));
+  const companyById = new Map(allCompanies.map((c) => [c.id, c]));
 
   const applicationCounts = countByStatus(allApplications, APPLICATION_STATUSES);
   const fundingCounts = countByStatus(allFunding, FUNDING_STATUSES);
@@ -149,14 +199,22 @@ export default async function DashboardPage() {
   const upcomingDeadlines: DeadlineItem[] = [
     ...allApplications
       .filter((a): a is Application & { deadline: string } => a.deadline !== null)
-      .map((a) => ({
-        key: `app-${a.id}`,
-        title: a.roleTitle,
-        company: a.companyId ? (companyName.get(a.companyId) ?? null) : null,
-        kind: "application" as const,
-        deadline: a.deadline,
-        daysRemaining: daysFromToday(a.deadline),
-      })),
+      .map((a) => {
+        const company = a.companyId
+          ? (companyById.get(a.companyId) ?? null)
+          : null;
+        return {
+          key: `app-${a.id}`,
+          title: a.roleTitle,
+          company: company
+            ? { name: company.name, industry: company.industry }
+            : null,
+          eligibilityTags: null,
+          kind: "application" as const,
+          deadline: a.deadline,
+          daysRemaining: daysFromToday(a.deadline),
+        };
+      }),
     ...allFunding
       .filter(
         (f): f is FundingProgram & { deadline: string } => f.deadline !== null,
@@ -165,6 +223,7 @@ export default async function DashboardPage() {
         key: `fund-${f.id}`,
         title: f.name,
         company: null,
+        eligibilityTags: f.eligibilityTags,
         kind: "funding" as const,
         deadline: f.deadline,
         daysRemaining: daysFromToday(f.deadline),
@@ -263,9 +322,19 @@ export default async function DashboardPage() {
                     <p className="truncate font-medium text-zinc-900 dark:text-zinc-50">
                       {item.title}
                     </p>
-                    <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
-                      {item.company ?? "—"}
-                    </p>
+                    {item.company ? (
+                      <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                        <CompanyLabel
+                          name={item.company.name}
+                          industry={item.company.industry}
+                        />
+                      </p>
+                    ) : item.eligibilityTags &&
+                      item.eligibilityTags.length > 0 ? (
+                      <p className="mt-0.5 truncate text-sm text-zinc-500 dark:text-zinc-400">
+                        {item.eligibilityTags.join(" · ")}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                     <span
@@ -316,15 +385,23 @@ export default async function DashboardPage() {
                 <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
                   {needsFollowup.map((contact) => {
                     const daysOverdue = -daysFromToday(contact.nextFollowupDate);
+                    const company = contact.companyId
+                      ? (companyById.get(contact.companyId) ?? null)
+                      : null;
                     return (
                       <tr key={contact.id}>
                         <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
                           {contact.name}
                         </td>
                         <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
-                          {contact.companyId
-                            ? (companyName.get(contact.companyId) ?? "—")
-                            : "—"}
+                          {company ? (
+                            <CompanyLabel
+                              name={company.name}
+                              industry={company.industry}
+                            />
+                          ) : (
+                            "—"
+                          )}
                         </td>
                         <td className="px-4 py-3 tabular-nums text-zinc-600 dark:text-zinc-300">
                           {contact.lastContactDate
@@ -336,7 +413,9 @@ export default async function DashboardPage() {
                             <span className="tabular-nums text-red-600 dark:text-red-400">
                               {formatDate(contact.nextFollowupDate)}
                             </span>
-                            <span className="inline-flex rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-300">
+                            <span
+                              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${urgencyStyle(-daysOverdue)}`}
+                            >
                               {daysOverdue === 0
                                 ? "Due today"
                                 : `${daysOverdue}d overdue`}

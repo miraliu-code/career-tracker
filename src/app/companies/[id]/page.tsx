@@ -2,7 +2,12 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { IndustryDot, StatusBadge, TierBadge } from "@/components/badges";
+import {
+  CONNECTION_LABELS,
+  IndustryDot,
+  StatusBadge,
+  TierBadge,
+} from "@/components/badges";
 import { db } from "@/db";
 import { applications, contacts } from "@/db/schema";
 import { formatDate } from "@/lib/dates";
@@ -11,13 +16,6 @@ import { DeleteCompany } from "../delete-company";
 import { EditCompany } from "../edit-company";
 
 export const dynamic = "force-dynamic";
-
-const CONNECTION_LABELS: Record<string, string> = {
-  alum: "Alum",
-  recruiter: "Recruiter",
-  mentor: "Mentor",
-  other: "Other",
-};
 
 export default async function CompanyDetailPage({
   params,

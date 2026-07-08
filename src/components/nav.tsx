@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/companies", label: "Companies" },
   { href: "/applications", label: "Applications" },
+  { href: "/contacts", label: "Contacts" },
 ];
 
 export function Nav() {

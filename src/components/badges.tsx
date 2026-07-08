@@ -81,6 +81,32 @@ export function CompanyLabel({
   );
 }
 
+export const CONNECTION_LABELS: Record<string, string> = {
+  alum: "Alum",
+  recruiter: "Recruiter",
+  mentor: "Mentor",
+  other: "Other",
+};
+
+const CONNECTION_STYLES: Record<string, string> = {
+  alum: "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
+  recruiter: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+  mentor:
+    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+  other: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+};
+
+export function ConnectionBadge({ type }: { type: string | null }) {
+  if (!type || !(type in CONNECTION_STYLES)) return null;
+  return (
+    <span
+      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${CONNECTION_STYLES[type]}`}
+    >
+      {CONNECTION_LABELS[type]}
+    </span>
+  );
+}
+
 /**
  * Urgency colors for deadline/follow-up badges: red for overdue or within
  * 3 days, amber for 4-7 days, neutral beyond that.

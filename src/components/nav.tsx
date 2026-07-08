@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/companies", label: "Companies" },
   { href: "/applications", label: "Applications" },
   { href: "/contacts", label: "Contacts" },
+  { href: "/funding", label: "Funding" },
 ];
 
 export function Nav() {

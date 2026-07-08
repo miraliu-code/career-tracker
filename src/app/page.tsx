@@ -1,5 +1,11 @@
 import { db } from "@/db";
 import type { Application, Contact, FundingProgram } from "@/db/schema";
+import {
+  CompanyLabel,
+  STATUS_LABELS,
+  STATUS_STYLES,
+} from "@/components/badges";
+import { daysFromToday, formatDate } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
 
@@ -18,82 +24,6 @@ const FUNDING_STATUSES = [
   "awarded",
   "rejected",
 ] as const;
-
-const STATUS_LABELS: Record<string, string> = {
-  not_started: "Not started",
-  applied: "Applied",
-  interviewing: "Interviewing",
-  offer: "Offer",
-  awarded: "Awarded",
-  rejected: "Rejected",
-};
-
-const STATUS_STYLES: Record<string, string> = {
-  not_started:
-    "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
-  applied: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  interviewing:
-    "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
-  offer:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  awarded:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  rejected: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
-};
-
-const INDUSTRY_DOTS = {
-  consulting: "bg-blue-500",
-  tech: "bg-green-500",
-  communications: "bg-purple-500",
-  international: "bg-yellow-500",
-  consumer: "bg-orange-500",
-  other: "bg-zinc-400 dark:bg-zinc-500",
-} as const;
-
-type IndustryCategory = keyof typeof INDUSTRY_DOTS;
-
-const INDUSTRY_KEYWORDS: [IndustryCategory, RegExp][] = [
-  ["consulting", /consult/],
-  ["tech", /tech|software|ai|engineering|observability|design|fintech|saas|cloud|data/],
-  ["communications", /communic|media|marketing|journal|public relations/],
-  ["international", /international|global|diplomacy|foreign/],
-  ["consumer", /consumer|retail|commerce|cpg|hospitality/],
-];
-
-function industryCategory(industry: string | null): IndustryCategory {
-  const normalized = (industry ?? "").toLowerCase();
-  for (const [category, pattern] of INDUSTRY_KEYWORDS) {
-    if (pattern.test(normalized)) return category;
-  }
-  return "other";
-}
-
-/** Parse a Postgres `date` string (YYYY-MM-DD) as UTC midnight. */
-function parseDate(value: string): Date {
-  return new Date(`${value}T00:00:00Z`);
-}
-
-/** Today's date at UTC midnight, from the server's local calendar date. */
-function todayUtc(): Date {
-  const now = new Date();
-  return new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
-  );
-}
-
-function daysFromToday(dateStr: string): number {
-  const msPerDay = 24 * 60 * 60 * 1000;
-  return Math.round((parseDate(dateStr).getTime() - todayUtc().getTime()) / msPerDay);
-}
-
-function formatDate(dateStr: string): string {
-  return parseDate(dateStr).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
 
 function countByStatus<T extends { status: string | null }>(
   rows: T[],
@@ -115,24 +45,6 @@ type DeadlineItem = {
   deadline: string;
   daysRemaining: number;
 };
-
-function CompanyLabel({
-  name,
-  industry,
-}: {
-  name: string;
-  industry: string | null;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span
-        aria-hidden
-        className={`size-2 shrink-0 rounded-full ${INDUSTRY_DOTS[industryCategory(industry)]}`}
-      />
-      {name}
-    </span>
-  );
-}
 
 function StatusBreakdown({
   counts,

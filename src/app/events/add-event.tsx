@@ -23,7 +23,7 @@ export function AddEvent() {
   }
 
   return (
-    <div className="w-full rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
+    <div className="w-full rounded-2xl border border-sage/30 border-l-[3px] border-l-rose-deep bg-white p-6 shadow-soft">
       <h2 className="mb-4 text-base font-semibold text-forest">
         Add Event
       </h2>

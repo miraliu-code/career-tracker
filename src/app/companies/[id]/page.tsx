@@ -87,7 +87,7 @@ export default async function CompanyDetailPage({
             <h2 className="mb-4 text-lg font-semibold text-forest">
               Notes
             </h2>
-            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
+            <div className="rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-white p-6 shadow-soft">
               <p className="whitespace-pre-wrap text-sm text-sage-deep">
                 {company.notes}
               </p>
@@ -103,13 +103,14 @@ export default async function CompanyDetailPage({
             </span>
           </h2>
           {linkedApplications.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+            <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
               <p className="text-sm text-sage-deep">
                 No applications linked to this company yet.
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
+            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-white shadow-soft">
               {linkedApplications.map((app) => (
                 <li
                   key={app.id}
@@ -154,13 +155,14 @@ export default async function CompanyDetailPage({
             </span>
           </h2>
           {linkedContacts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+            <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
               <p className="text-sm text-sage-deep">
                 No contacts linked to this company yet.
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
+            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-white shadow-soft">
               {linkedContacts.map((contact) => (
                 <li
                   key={contact.id}

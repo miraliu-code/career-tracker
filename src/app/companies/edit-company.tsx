@@ -20,7 +20,7 @@ export function EditCompany({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-xl border border-sage/50 bg-white px-4 py-2 text-sm font-medium text-forest hover:bg-blush/30"
+        className="rounded-full border border-sage/50 bg-white px-4 py-2 text-sm font-medium text-forest hover:bg-blush/30"
       >
         Edit
       </button>
@@ -28,7 +28,7 @@ export function EditCompany({
   }
 
   return (
-    <div className="w-full rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
+    <div className="w-full rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-white p-6 shadow-soft">
       <h2 className="mb-4 text-base font-semibold text-forest">
         Edit Company
       </h2>

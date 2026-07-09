@@ -4,19 +4,19 @@
   /* Warm palette */
   --color-forest: #283d3b; /* primary text, nav, headers, primary buttons */
   --color-forest-soft: #3e5654; /* primary button hover */
-  --color-forest-mist: #e1eae8; /* calm badge background */
+  --color-forest-mist: #c6dad7; /* calm badge background */
   --color-sage: #919682; /* borders, dots, decorative only (fails AA as text) */
   --color-sage-deep: #5c6153; /* secondary/muted text (AA on cream/white) */
-  --color-sage-mist: #eaebe4; /* neutral badge background */
+  --color-sage-mist: #dadeca; /* neutral badge background */
   --color-rose: #904e55; /* primary accent, links, urgent/negative */
   --color-rose-deep: #7a3e45; /* accent text on blush/rose-mist */
-  --color-rose-mist: #f6e4e6; /* negative badge background */
+  --color-rose-mist: #f2cbd0; /* negative badge background */
   --color-blush: #f7cdd4; /* soft highlight backgrounds, hover states */
   --color-cream: #fbf8f6; /* page background */
-  --color-moss: #4a6b4f; /* positive text (offer/awarded/accepted) */
-  --color-moss-mist: #e4ede4; /* positive badge background */
-  --color-honey: #7e5a2e; /* warm attention text (interviewing, 4-7d) */
-  --color-honey-mist: #f5e9d8; /* warm attention badge background */
+  --color-moss: #3f5c44; /* positive text (offer/awarded/accepted) */
+  --color-moss-mist: #c9dec9; /* positive badge background */
+  --color-honey: #6e4e24; /* warm attention text (interviewing, 4-7d) */
+  --color-honey-mist: #f0d9a9; /* warm attention badge background */
   --color-mist: #f2efeb; /* warm neutral surface */
 
   /* Softer, more diffuse card shadow */

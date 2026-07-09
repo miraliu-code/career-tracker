@@ -27,7 +27,7 @@ export default async function CompaniesPage() {
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="flex items-center gap-2.5 text-2xl font-semibold tracking-tight text-forest">
-              <BuildingIcon className="size-7 text-rose" />
+              <span className="flex size-10 items-center justify-center rounded-full bg-sage-deep text-cream"><BuildingIcon className="size-5" /></span>
               Companies
             </h1>
             <p className="mt-1 text-sm text-sage-deep">
@@ -42,7 +42,8 @@ export default async function CompaniesPage() {
         </div>
 
         {rows.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
             <p className="text-sm font-medium text-forest">
               No companies yet
             </p>
@@ -51,7 +52,7 @@ export default async function CompaniesPage() {
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
+          <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-white shadow-soft">
             {rows.map(({ company, applicationCount }) => (
               <li key={company.id}>
                 <Link

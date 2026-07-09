@@ -230,7 +230,8 @@ export function FundingList({ programs }: { programs: FundingRow[] }) {
       </div>
 
       {visible.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+        <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
           <p className="text-sm font-medium text-forest">
             {programs.length === 0
               ? "No funding programs yet"
@@ -243,7 +244,7 @@ export function FundingList({ programs }: { programs: FundingRow[] }) {
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
+        <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 border-l-[3px] border-l-forest-soft bg-white shadow-soft">
           {visible.map((program) =>
             editingId === program.id ? (
               <li
@@ -258,7 +259,7 @@ export function FundingList({ programs }: { programs: FundingRow[] }) {
                     type="button"
                     onClick={() => handleDelete(program)}
                     disabled={deletePending}
-                    className="rounded-xl border border-rose/30 bg-white px-3 py-1.5 text-sm font-medium text-rose hover:bg-blush/40 disabled:opacity-50"
+                    className="rounded-full border border-rose/30 bg-white px-3 py-1.5 text-sm font-medium text-rose hover:bg-blush/40 disabled:opacity-50"
                   >
                     {deletePending ? "Deleting…" : "Delete"}
                   </button>

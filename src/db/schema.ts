@@ -14,6 +14,10 @@ export const companies = pgTable("companies", {
   hqLocation: text("hq_location"),
   dreamTier: text("dream_tier", { enum: ["A", "B", "C"] }),
   notes: text("notes"),
+  jobBoardType: text("job_board_type", {
+    enum: ["greenhouse", "lever", "none"],
+  }),
+  jobBoardSlug: text("job_board_slug"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

@@ -15,6 +15,13 @@
       "when": 1783552820660,
       "tag": "0001_harsh_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783615554165,
+      "tag": "0002_married_owl",
+      "breakpoints": true
     }
   ]
 }

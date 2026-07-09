@@ -22,6 +22,13 @@
       "when": 1783615554165,
       "tag": "0002_married_owl",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783623235333,
+      "tag": "0003_normal_red_wolf",
+      "breakpoints": true
     }
   ]
 }

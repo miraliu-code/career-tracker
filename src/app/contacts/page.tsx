@@ -1,6 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 
 import { HeartIcon } from "@/components/icons";
+import { randomMascotSeed } from "@/components/mascots";
 import { db } from "@/db";
 import { companies, contacts } from "@/db/schema";
 
@@ -65,7 +66,11 @@ export default async function ContactsPage() {
           <AddContact companies={companyOptions} />
         </div>
 
-        <ContactsList contacts={contactRows} companies={companyOptions} />
+        <ContactsList
+          contacts={contactRows}
+          companies={companyOptions}
+          mascotSeed={randomMascotSeed()}
+        />
       </main>
     </div>
   );

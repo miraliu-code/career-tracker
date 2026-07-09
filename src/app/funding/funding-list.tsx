@@ -7,7 +7,8 @@ import {
   STATUS_STYLES,
   urgencyStyle,
 } from "@/components/badges";
-import { SkunkMascot } from "@/components/mascots";
+import { CelebrationBurst } from "@/components/celebration";
+import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import {
@@ -88,7 +89,15 @@ function DeadlineCell({ deadline }: { deadline: string }) {
   );
 }
 
-function QuickStatus({ id, status }: { id: number; status: string }) {
+function QuickStatus({
+  id,
+  status,
+  onCelebrate,
+}: {
+  id: number;
+  status: string;
+  onCelebrate?: () => void;
+}) {
   const [value, setValue] = useState(status);
   const [pending, startTransition] = useTransition();
 
@@ -102,6 +111,7 @@ function QuickStatus({ id, status }: { id: number; status: string }) {
         e.stopPropagation();
         const next = e.target.value;
         setValue(next);
+        if (next === "awarded") onCelebrate?.();
         startTransition(() => updateFundingStatus(id, next));
       }}
       className={`cursor-pointer rounded-full border-0 py-0.5 pl-2.5 pr-7 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-rose/40 disabled:opacity-60 ${STATUS_STYLES[value] ?? STATUS_STYLES.not_started}`}
@@ -139,11 +149,18 @@ function FilterPill({
   );
 }
 
-export function FundingList({ programs }: { programs: FundingRow[] }) {
+export function FundingList({
+  programs,
+  mascotSeed,
+}: {
+  programs: FundingRow[];
+  mascotSeed: number;
+}) {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("deadline");
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [celebratingId, setCelebratingId] = useState<number | null>(null);
   const [deletePending, startDeleteTransition] = useTransition();
 
   const visible = useMemo(() => {
@@ -232,7 +249,7 @@ export function FundingList({ programs }: { programs: FundingRow[] }) {
 
       {visible.length === 0 ? (
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <SkunkMascot className="mx-auto mb-3 size-24" />
+          <RandomMascot seed={mascotSeed} className="mx-auto mb-3 size-24" />
           <p className="text-sm font-medium text-forest">
             {programs.length === 0
               ? "No funding programs yet"
@@ -240,7 +257,7 @@ export function FundingList({ programs }: { programs: FundingRow[] }) {
           </p>
           <p className="mt-1 text-sm text-sage-deep">
             {programs.length === 0
-              ? "Skunk is keeping the spot warm — add a scholarship or fellowship."
+              ? `${mascotName(mascotSeed)} is keeping the spot warm — add a scholarship or fellowship.`
               : "Try adjusting the filters."}
           </p>
         </div>
@@ -310,7 +327,7 @@ export function FundingList({ programs }: { programs: FundingRow[] }) {
                       </p>
                     )}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                <div className="relative flex flex-wrap items-center gap-2 sm:justify-end">
                   {program.deadline && (
                     <DeadlineCell deadline={program.deadline} />
                   )}
@@ -318,7 +335,11 @@ export function FundingList({ programs }: { programs: FundingRow[] }) {
                     key={`${program.id}-${program.status}`}
                     id={program.id}
                     status={program.status}
+                    onCelebrate={() => setCelebratingId(program.id)}
                   />
+                  {celebratingId === program.id && (
+                    <CelebrationBurst onDone={() => setCelebratingId(null)} />
+                  )}
                 </div>
               </li>
             ),

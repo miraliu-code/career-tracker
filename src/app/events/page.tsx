@@ -1,4 +1,5 @@
 import { CalendarIcon } from "@/components/icons";
+import { randomMascotSeed } from "@/components/mascots";
 import { db } from "@/db";
 
 import { AddEvent } from "./add-event";
@@ -37,7 +38,7 @@ export default async function EventsPage() {
           <AddEvent />
         </div>
 
-        <EventsList events={rows} />
+        <EventsList events={rows} mascotSeed={randomMascotSeed()} />
       </main>
     </div>
   );

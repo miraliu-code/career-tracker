@@ -61,6 +61,22 @@ export const fundingPrograms = pgTable("funding_programs", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category", {
+    enum: ["case_competition", "conference", "pipeline_program"],
+  }),
+  organization: text("organization"),
+  deadline: date("deadline"),
+  location: text("location"),
+  status: text("status", {
+    enum: ["not_started", "applied", "accepted", "attending", "completed"],
+  }).default("not_started"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
 export type Application = typeof applications.$inferSelect;
@@ -69,3 +85,5 @@ export type Contact = typeof contacts.$inferSelect;
 export type NewContact = typeof contacts.$inferInsert;
 export type FundingProgram = typeof fundingPrograms.$inferSelect;
 export type NewFundingProgram = typeof fundingPrograms.$inferInsert;
+export type Event = typeof events.$inferSelect;
+export type NewEvent = typeof events.$inferInsert;

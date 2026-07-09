@@ -5,6 +5,9 @@ export const STATUS_LABELS: Record<string, string> = {
   offer: "Offer",
   awarded: "Awarded",
   rejected: "Rejected",
+  accepted: "Accepted",
+  attending: "Attending",
+  completed: "Completed",
 };
 
 export const STATUS_STYLES: Record<string, string> = {
@@ -18,6 +21,11 @@ export const STATUS_STYLES: Record<string, string> = {
   awarded:
     "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
   rejected: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
+  accepted:
+    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+  attending:
+    "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300",
+  completed: "bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
 };
 
 export function StatusBadge({ status }: { status: string }) {

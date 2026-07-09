@@ -9,6 +9,7 @@ import {
   IndustryDot,
   urgencyStyle,
 } from "@/components/badges";
+import { StripesMascot } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import { deleteContact, markContactedToday, updateContact } from "./actions";
@@ -204,7 +205,7 @@ export function ContactsList({
 
       {visible.length === 0 ? (
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
+          <StripesMascot className="mx-auto mb-3 size-24" />
           <p className="text-sm font-medium text-forest">
             {contacts.length === 0
               ? "No contacts yet"
@@ -212,7 +213,7 @@ export function ContactsList({
           </p>
           <p className="mt-1 text-sm text-sage-deep">
             {contacts.length === 0
-              ? "Every network starts with one person — add your first contact."
+              ? "Stripes is waiting to meet everyone — add your first contact."
               : "Try adjusting the filters."}
           </p>
         </div>

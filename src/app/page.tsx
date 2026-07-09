@@ -7,6 +7,10 @@ import {
   urgencyStyle,
 } from "@/components/badges";
 import {
+  SkunkMascot,
+  StripesMascot,
+} from "@/components/mascots";
+import {
   BriefcaseIcon,
   GradCapIcon,
   HeartIcon,
@@ -224,12 +228,12 @@ export default async function DashboardPage() {
           </h2>
           {upcomingDeadlines.length === 0 ? (
             <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
+          <SkunkMascot napping className="mx-auto mb-3 size-24" />
               <p className="text-sm font-medium text-forest">
                 Nothing due in the next 30 days
               </p>
               <p className="mt-1 text-sm text-sage-deep">
-                Enjoy the breathing room — or go find the next opportunity.
+                Skunk is napping on your deadlines — enjoy the quiet, or go find the next one.
               </p>
             </div>
           ) : (
@@ -285,12 +289,12 @@ export default async function DashboardPage() {
           </h2>
           {needsFollowup.length === 0 ? (
             <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
+          <StripesMascot className="mx-auto mb-3 size-24" />
               <p className="text-sm font-medium text-forest">
                 All caught up
               </p>
               <p className="mt-1 text-sm text-sage-deep">
-                No follow-ups due today — nicely done.
+                Stripes checked twice — no follow-ups due today. Nicely done.
               </p>
             </div>
           ) : (

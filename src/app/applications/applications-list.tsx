@@ -9,6 +9,7 @@ import {
   STATUS_STYLES,
   urgencyStyle,
 } from "@/components/badges";
+import { BiscuitMascot } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import {
@@ -184,7 +185,7 @@ export function ApplicationsList({
 
       {visible.length === 0 ? (
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
+          <BiscuitMascot className="mx-auto mb-3 size-24" />
           <p className="text-sm font-medium text-forest">
             {statusFilter === "all"
               ? "No applications yet"
@@ -192,7 +193,7 @@ export function ApplicationsList({
           </p>
           <p className="mt-1 text-sm text-sage-deep">
             {statusFilter === "all"
-              ? "Your next opportunity starts here — add your first application."
+              ? "Biscuit is ready to dig — add your first application and she’ll help you sniff out the rest."
               : "Try adjusting the filters."}
           </p>
         </div>

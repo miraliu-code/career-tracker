@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-@theme {
+/* `static` keeps every variable in the output — mascots reference colors
+ * via var() from SVG, which Tailwind's scanner can't see. */
+@theme static {
   /* Warm palette */
   --color-forest: #283d3b; /* primary text, nav, headers, primary buttons */
   --color-forest-soft: #3e5654; /* primary button hover */
@@ -19,6 +21,7 @@
   --color-honey-mist: #f0d9a9; /* warm attention badge background */
   --color-mist: #f2efeb; /* warm neutral surface */
   --color-caramel: #a9714b; /* Biscuit's coat (mascots) */
+  --color-calico: #c97b3d; /* Baby Cat's calico patches (mascots) */
 
   /* Softer, more diffuse card shadow */
   --shadow-soft: 0 10px 30px -14px rgb(40 61 59 / 0.14);
@@ -42,4 +45,147 @@ h4,
 nav,
 button {
   font-family: var(--font-heading);
+}
+
+/* ---------------------------------------------------------------------
+ * Mascot motion. Everything animates transform/opacity only (GPU-cheap,
+ * no layout), and all of it sits behind prefers-reduced-motion.
+ * Per-instance stagger comes from --mascot-delay set inline on each svg.
+ * ------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .mascot {
+    transition: transform 0.2s ease;
+  }
+  .mascot:hover {
+    transform: scale(1.07);
+  }
+  .mascot-breathe {
+    animation: mascot-breathe 3.6s ease-in-out infinite;
+    animation-delay: var(--mascot-delay, 0s);
+  }
+  .mascot-blink {
+    animation: mascot-blink 5.4s linear infinite;
+    animation-delay: var(--mascot-delay, 0s);
+  }
+  .mascot-tail {
+    animation: mascot-tail-sway 4.8s ease-in-out infinite;
+    animation-delay: var(--mascot-delay, 0s);
+  }
+  .mascot:hover .mascot-ear {
+    animation: mascot-ear-twitch 0.35s ease-in-out;
+  }
+  .celebration-mascot {
+    animation: mascot-celebrate 1.5s ease-in-out forwards;
+  }
+  .confetti-dot {
+    animation: confetti-pop 1.3s ease-out forwards;
+    animation-delay: var(--confetti-delay, 0s);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration-burst {
+    display: none;
+  }
+}
+
+.confetti-dot {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--confetti-color, var(--color-rose));
+  opacity: 0;
+}
+
+@keyframes mascot-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes mascot-blink {
+  0%,
+  90%,
+  96%,
+  100% {
+    transform: scaleY(1);
+  }
+  92%,
+  94% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes mascot-tail-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes mascot-ear-twitch {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(-9deg);
+  }
+  75% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes mascot-celebrate {
+  0% {
+    transform: translateY(8px) scale(0.5);
+    opacity: 0;
+  }
+  18% {
+    transform: translateY(-4px) scale(1.05);
+    opacity: 1;
+  }
+  32% {
+    transform: translateY(0) scale(1);
+  }
+  48% {
+    transform: translateY(-9px) scale(1);
+  }
+  62% {
+    transform: translateY(0) scale(1);
+  }
+  85% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes confetti-pop {
+  0% {
+    transform: translate(-50%, 0) scale(0.4);
+    opacity: 0;
+  }
+  12% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--confetti-dx, 0px)), var(--confetti-dy, -30px))
+      scale(0.35);
+    opacity: 0;
+  }
 }

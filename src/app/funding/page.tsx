@@ -1,4 +1,5 @@
 import { GradCapIcon } from "@/components/icons";
+import { randomMascotSeed } from "@/components/mascots";
 import { db } from "@/db";
 
 import { AddFunding } from "./add-funding";
@@ -37,7 +38,7 @@ export default async function FundingPage() {
           <AddFunding />
         </div>
 
-        <FundingList programs={rows} />
+        <FundingList programs={rows} mascotSeed={randomMascotSeed()} />
       </main>
     </div>
   );

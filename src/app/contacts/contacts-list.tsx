@@ -9,7 +9,7 @@ import {
   IndustryDot,
   urgencyStyle,
 } from "@/components/badges";
-import { StripesMascot } from "@/components/mascots";
+import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import { deleteContact, markContactedToday, updateContact } from "./actions";
@@ -102,9 +102,11 @@ function MarkContactedButton({ id }: { id: number }) {
 export function ContactsList({
   contacts,
   companies,
+  mascotSeed,
 }: {
   contacts: ContactRow[];
   companies: CompanyOption[];
+  mascotSeed: number;
 }) {
   const [connectionFilter, setConnectionFilter] =
     useState<ConnectionFilter>("all");
@@ -205,7 +207,7 @@ export function ContactsList({
 
       {visible.length === 0 ? (
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <StripesMascot className="mx-auto mb-3 size-24" />
+          <RandomMascot seed={mascotSeed} className="mx-auto mb-3 size-24" />
           <p className="text-sm font-medium text-forest">
             {contacts.length === 0
               ? "No contacts yet"
@@ -213,7 +215,7 @@ export function ContactsList({
           </p>
           <p className="mt-1 text-sm text-sage-deep">
             {contacts.length === 0
-              ? "Stripes is waiting to meet everyone — add your first contact."
+              ? `${mascotName(mascotSeed)} is waiting to meet everyone — add your first contact.`
               : "Try adjusting the filters."}
           </p>
         </div>

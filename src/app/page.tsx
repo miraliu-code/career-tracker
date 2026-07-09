@@ -10,8 +10,9 @@ import {
   urgencyStyle,
 } from "@/components/badges";
 import {
-  SkunkMascot,
-  StripesMascot,
+  RandomMascot,
+  mascotName,
+  randomMascotSeed,
 } from "@/components/mascots";
 import {
   BriefcaseIcon,
@@ -97,6 +98,8 @@ function DaysRemaining({ days }: { days: number }) {
 }
 
 export default async function DashboardPage() {
+  const deadlinesSeed = randomMascotSeed();
+  const followupSeed = randomMascotSeed();
   const [allApplications, allFunding, allContacts, allCompanies, newSignals] =
     await Promise.all([
       db.query.applications.findMany(),
@@ -241,12 +244,16 @@ export default async function DashboardPage() {
           </h2>
           {upcomingDeadlines.length === 0 ? (
             <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <SkunkMascot napping className="mx-auto mb-3 size-24" />
+              <RandomMascot
+                seed={deadlinesSeed}
+                className="mx-auto mb-3 size-24"
+              />
               <p className="text-sm font-medium text-forest">
                 Nothing due in the next 30 days
               </p>
               <p className="mt-1 text-sm text-sage-deep">
-                Skunk is napping on your deadlines — enjoy the quiet, or go find the next one.
+                {mascotName(deadlinesSeed)} is lounging on your deadlines —
+                enjoy the quiet, or go find the next one.
               </p>
             </div>
           ) : (
@@ -302,12 +309,16 @@ export default async function DashboardPage() {
           </h2>
           {needsFollowup.length === 0 ? (
             <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <StripesMascot className="mx-auto mb-3 size-24" />
+              <RandomMascot
+                seed={followupSeed}
+                className="mx-auto mb-3 size-24"
+              />
               <p className="text-sm font-medium text-forest">
                 All caught up
               </p>
               <p className="mt-1 text-sm text-sage-deep">
-                Stripes checked twice — no follow-ups due today. Nicely done.
+                {mascotName(followupSeed)} checked twice — no follow-ups due
+                today. Nicely done.
               </p>
             </div>
           ) : (

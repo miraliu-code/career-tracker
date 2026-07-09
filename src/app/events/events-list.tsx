@@ -7,7 +7,7 @@ import {
   STATUS_STYLES,
   urgencyStyle,
 } from "@/components/badges";
-import { BiscuitMascot } from "@/components/mascots";
+import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import { deleteEvent, updateEvent, updateEventStatus } from "./actions";
@@ -135,7 +135,13 @@ function FilterPill({
   );
 }
 
-export function EventsList({ events }: { events: EventRow[] }) {
+export function EventsList({
+  events,
+  mascotSeed,
+}: {
+  events: EventRow[];
+  mascotSeed: number;
+}) {
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("deadline");
@@ -227,7 +233,7 @@ export function EventsList({ events }: { events: EventRow[] }) {
 
       {visible.length === 0 ? (
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <BiscuitMascot className="mx-auto mb-3 size-24" />
+          <RandomMascot seed={mascotSeed} className="mx-auto mb-3 size-24" />
           <p className="text-sm font-medium text-forest">
             {events.length === 0
               ? "No events yet"
@@ -235,7 +241,7 @@ export function EventsList({ events }: { events: EventRow[] }) {
           </p>
           <p className="mt-1 text-sm text-sage-deep">
             {events.length === 0
-              ? "Biscuit is sniffing around for opportunities — add a case competition, conference, or pipeline program."
+              ? `${mascotName(mascotSeed)} is sniffing out opportunities — add a case competition, conference, or pipeline program.`
               : "Try adjusting the filters."}
           </p>
         </div>

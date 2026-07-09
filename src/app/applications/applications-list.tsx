@@ -9,7 +9,8 @@ import {
   STATUS_STYLES,
   urgencyStyle,
 } from "@/components/badges";
-import { BiscuitMascot } from "@/components/mascots";
+import { CelebrationBurst } from "@/components/celebration";
+import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import {
@@ -67,7 +68,15 @@ function DeadlineCell({ deadline }: { deadline: string }) {
   );
 }
 
-function QuickStatus({ id, status }: { id: number; status: string }) {
+function QuickStatus({
+  id,
+  status,
+  onCelebrate,
+}: {
+  id: number;
+  status: string;
+  onCelebrate?: () => void;
+}) {
   const [value, setValue] = useState(status);
   const [pending, startTransition] = useTransition();
 
@@ -81,6 +90,7 @@ function QuickStatus({ id, status }: { id: number; status: string }) {
         e.stopPropagation();
         const next = e.target.value;
         setValue(next);
+        if (next === "offer") onCelebrate?.();
         startTransition(() => updateApplicationStatus(id, next));
       }}
       className={`cursor-pointer rounded-full border-0 py-0.5 pl-2.5 pr-7 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-rose/40 disabled:opacity-60 ${STATUS_STYLES[value] ?? STATUS_STYLES.not_started}`}
@@ -97,13 +107,16 @@ function QuickStatus({ id, status }: { id: number; status: string }) {
 export function ApplicationsList({
   applications,
   companies,
+  mascotSeed,
 }: {
   applications: ApplicationRow[];
   companies: CompanyOption[];
+  mascotSeed: number;
 }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("deadline");
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [celebratingId, setCelebratingId] = useState<number | null>(null);
   const [deletePending, startDeleteTransition] = useTransition();
 
   const visible = useMemo(() => {
@@ -185,7 +198,7 @@ export function ApplicationsList({
 
       {visible.length === 0 ? (
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <BiscuitMascot className="mx-auto mb-3 size-24" />
+          <RandomMascot seed={mascotSeed} className="mx-auto mb-3 size-24" />
           <p className="text-sm font-medium text-forest">
             {statusFilter === "all"
               ? "No applications yet"
@@ -193,7 +206,7 @@ export function ApplicationsList({
           </p>
           <p className="mt-1 text-sm text-sage-deep">
             {statusFilter === "all"
-              ? "Biscuit is ready to dig — add your first application and she’ll help you sniff out the rest."
+              ? `${mascotName(mascotSeed)} is waiting for your first application — add one and get rolling.`
               : "Try adjusting the filters."}
           </p>
         </div>
@@ -264,13 +277,17 @@ export function ApplicationsList({
                     {app.location && <span>{app.location}</span>}
                   </p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                <div className="relative flex flex-wrap items-center gap-2 sm:justify-end">
                   {app.deadline && <DeadlineCell deadline={app.deadline} />}
                   <QuickStatus
                     key={`${app.id}-${app.status}`}
                     id={app.id}
                     status={app.status}
+                    onCelebrate={() => setCelebratingId(app.id)}
                   />
+                  {celebratingId === app.id && (
+                    <CelebrationBurst onDone={() => setCelebratingId(null)} />
+                  )}
                 </div>
               </li>
             ),

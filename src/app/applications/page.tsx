@@ -1,6 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 
 import { BriefcaseIcon } from "@/components/icons";
+import { randomMascotSeed } from "@/components/mascots";
 import { db } from "@/db";
 import { applications, companies } from "@/db/schema";
 
@@ -68,6 +69,7 @@ export default async function ApplicationsPage() {
         <ApplicationsList
           applications={applicationRows}
           companies={companyOptions}
+          mascotSeed={randomMascotSeed()}
         />
       </main>
     </div>

@@ -477,9 +477,9 @@ export function BabyCatMascot({
 }
 
 /**
- * Panther — sleek black panther (honorary pet). Low prowling stance,
- * forest coat with a lighter sheen along the back and shoulders, amber
- * eye with a rose-gold glint. More intense than the house cats.
+ * Panther — sleek black panther (honorary pet). Sits upright like the
+ * house cats but keeps the intensity: all-forest coat with a lighter
+ * sheen across the shoulders, amber almond eyes with rose-gold glints.
  */
 export function PantherMascot({
   className = "size-20",
@@ -495,57 +495,53 @@ export function PantherMascot({
     >
       <defs>
         <BodyGradient id="mg-panther" color={FOREST} />
-        <GroundShadow id="mb-panther" cx={60} rx={44} />
+        <GroundShadow id="mb-panther" cx={60} rx={31} cy={110} />
       </defs>
-      <g className="mascot-breathe" style={origin(58, 105)}>
-        {/* long tail, held low then flicked up */}
-        <g className="mascot-tail" style={origin(18, 78)}>
+      <g className="mascot-breathe" style={origin(60, 106)}>
+        {/* long tail */}
+        <g className="mascot-tail" style={origin(87, 90)}>
           <path
-            d="M18 78 q-13 -5 -9 -24"
+            d="M87 90 q19 -4 15 -29"
             stroke={FOREST}
-            strokeWidth="6"
+            strokeWidth="8"
             strokeLinecap="round"
             fill="none"
           />
         </g>
-        {/* low-slung body + front shoulder */}
+        {/* upright body */}
+        <ellipse cx="60" cy="84" rx="29" ry="25" fill="url(#mg-panther)" />
+        {/* soft chest tone instead of a light belly patch */}
         <ellipse
-          cx="52"
-          cy="80"
-          rx="36"
-          ry="16"
-          fill="url(#mg-panther)"
-          transform="rotate(2 52 80)"
+          cx="60"
+          cy="92"
+          rx="16"
+          ry="14"
+          fill={FOREST_SOFT}
+          opacity="0.45"
         />
-        <circle cx="80" cy="78" r="15" fill="url(#mg-panther)" />
-        {/* sheen highlight along the back */}
+        {/* sheen highlight across the shoulders */}
         <path
-          d="M22 70 q28 -14 58 -4"
+          d="M38 70 q22 -11 44 0"
           stroke={FOREST_SOFT}
           strokeWidth="3"
           strokeLinecap="round"
           fill="none"
           opacity="0.55"
         />
-        {/* prowling legs */}
-        <rect x="22" y="86" width="8" height="19" rx="4" fill={FOREST} />
-        <rect x="36" y="88" width="8" height="17" rx="4" fill={FOREST} />
-        <rect x="70" y="88" width="8" height="17" rx="4" fill={FOREST} />
-        <rect x="85" y="86" width="8" height="19" rx="4" fill={FOREST} />
-        {/* ears — small and pinned */}
-        <g className="mascot-ear" style={origin(91, 52)}>
-          <path d="M86 54 L88 42 L96 50 Z" fill={FOREST} />
-          <path d="M88.5 51 L89.5 45.5 L93.5 49.5 Z" fill={ROSE} opacity="0.35" />
+        {/* front paws */}
+        <ellipse cx="51" cy="106" rx="6.5" ry="3.8" fill={FOREST_SOFT} opacity="0.85" />
+        <ellipse cx="69" cy="106" rx="6.5" ry="3.8" fill={FOREST_SOFT} opacity="0.85" />
+        {/* ears */}
+        <g className="mascot-ear" style={origin(49, 27)}>
+          <path d="M40 30 L47 9 L59 24 Z" fill={FOREST} />
+          <path d="M44.5 24 L47.5 13.5 L53.5 21 Z" fill={ROSE} opacity="0.35" />
         </g>
-        <g className="mascot-ear" style={origin(107, 51)}>
-          <path d="M102 51 L107 40 L112 52 Z" fill={FOREST} />
-          <path d="M104.5 49.5 L107 44 L109.5 50 Z" fill={ROSE} opacity="0.35" />
+        <g className="mascot-ear" style={origin(71, 27)}>
+          <path d="M80 30 L73 9 L61 24 Z" fill={FOREST} />
+          <path d="M75.5 24 L72.5 13.5 L66.5 21 Z" fill={ROSE} opacity="0.35" />
         </g>
-        {/* head, slightly forward and low */}
-        <circle cx="98" cy="64" r="15" fill="url(#mg-panther)" />
-        {/* muzzle */}
-        <ellipse cx="105" cy="70" rx="7.5" ry="5.5" fill={FOREST_SOFT} />
-        <circle cx="110.5" cy="68" r="2.2" fill={FOREST} />
+        {/* head */}
+        <circle cx="60" cy="42" r="23" fill="url(#mg-panther)" />
         {/* fur texture */}
         <g
           stroke={CREAM}
@@ -554,33 +550,47 @@ export function PantherMascot({
           fill="none"
           opacity="0.14"
         >
-          <path d="M40 82 q2 3 0 6" />
-          <path d="M58 84 q2 3 0 6" />
-          <path d="M78 70 q2 3 0 6" />
+          <path d="M42 32 q-2 3 -1 6" />
+          <path d="M36 80 q-2 4 0 7" />
+          <path d="M85 80 q2 4 0 7" />
         </g>
-        {/* focused brow */}
-        <path
-          d="M90.5 56.5 q4 -2 7.5 -0.5"
+        {/* focused brows */}
+        <g
           stroke={CREAM}
           strokeWidth="1.2"
           strokeLinecap="round"
           fill="none"
           opacity="0.35"
-        />
-        {/* amber eye with rose-gold glint */}
-        <g className="mascot-blink" style={origin(95, 62)}>
-          <ellipse cx="94.5" cy="61.5" rx="3.5" ry="2.6" fill={HONEY_MIST} />
-          <ellipse cx="95" cy="61.5" rx="1.1" ry="2" fill={FOREST} />
-          <circle cx="93.4" cy="60.5" r="0.7" fill={ROSE} opacity="0.9" />
+        >
+          <path d="M44 34.5 q4 -2 8 -0.5" />
+          <path d="M68 34 q4 -1.5 8 0.5" />
         </g>
-        {/* quiet mouth */}
+        {/* amber almond eyes with rose-gold glints */}
+        <g className="mascot-blink" style={origin(60, 41)}>
+          <ellipse cx="48.5" cy="41" rx="3.9" ry="2.9" fill={HONEY_MIST} />
+          <ellipse cx="71.5" cy="41" rx="3.9" ry="2.9" fill={HONEY_MIST} />
+          <ellipse cx="48.8" cy="41" rx="1.2" ry="2.3" fill={FOREST} />
+          <ellipse cx="71.2" cy="41" rx="1.2" ry="2.3" fill={FOREST} />
+          <circle cx="47.3" cy="40" r="0.7" fill={ROSE} opacity="0.9" />
+          <circle cx="70.1" cy="40" r="0.7" fill={ROSE} opacity="0.9" />
+        </g>
+        {/* muzzle shading, rose nose, quiet mouth */}
+        <ellipse
+          cx="60"
+          cy="51"
+          rx="13"
+          ry="9"
+          fill={FOREST_SOFT}
+          opacity="0.5"
+        />
+        <ellipse cx="60" cy="49.5" rx="3" ry="2.2" fill={ROSE} opacity="0.5" />
         <path
-          d="M104 73.5 q3 2 6 0"
+          d="M56 54.5 q2 2.2 4 0 q2 2.2 4 0"
           stroke={CREAM}
-          strokeWidth="1.2"
+          strokeWidth="1.4"
           strokeLinecap="round"
           fill="none"
-          opacity="0.5"
+          opacity="0.55"
         />
       </g>
     </svg>

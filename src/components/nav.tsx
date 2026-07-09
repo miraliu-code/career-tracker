@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import {
+  BiscuitMascot,
+  SkunkMascot,
+  StripesMascot,
+} from "@/components/mascots";
+
 const LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/companies", label: "Companies" },
@@ -17,9 +23,16 @@ export function Nav() {
 
   return (
     <header className="border-b border-sage/30 bg-white">
-      <nav className="mx-auto flex w-full max-w-6xl items-center gap-1 px-4 py-3 sm:px-6">
-        <span className="mr-4 text-sm font-semibold tracking-tight text-forest">
-          Career Tracker
+      <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-1 px-4 py-3 sm:px-6">
+        <span className="mr-4 flex items-center gap-2">
+          <span aria-hidden className="flex items-end gap-0.5">
+            <SkunkMascot className="size-7" />
+            <StripesMascot className="size-7" />
+            <BiscuitMascot className="size-7" />
+          </span>
+          <span className="text-sm font-semibold tracking-tight text-forest">
+            Career Tracker
+          </span>
         </span>
         {LINKS.map(({ href, label }) => {
           const active =

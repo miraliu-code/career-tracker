@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Simplified Skunk face favicon (static file, so hex literals) -->
+  <path d="M10 26 L16 4 L30 20 Z" fill="#283D3B"/>
+  <path d="M54 26 L48 4 L34 20 Z" fill="#283D3B"/>
+  <path d="M14.5 20 L17.5 9.5 L24 17 Z" fill="#F7CDD4"/>
+  <path d="M49.5 20 L46.5 9.5 L40 17 Z" fill="#F7CDD4"/>
+  <circle cx="32" cy="36" r="26" fill="#283D3B"/>
+  <ellipse cx="32" cy="45" rx="18" ry="13.5" fill="#FBF8F6"/>
+  <path d="M13 33 q5.5 5.5 11 0" stroke="#FBF8F6" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M40 33 q5.5 5.5 11 0" stroke="#FBF8F6" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <ellipse cx="32" cy="44" rx="4" ry="3" fill="#904E55" opacity="0.6"/>
+  <path d="M27 51 q2.5 2.8 5 0 q2.5 2.8 5 0" stroke="#283D3B" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+</svg>

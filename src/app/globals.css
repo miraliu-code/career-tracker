@@ -18,6 +18,7 @@
   --color-honey: #6e4e24; /* warm attention text (interviewing, 4-7d) */
   --color-honey-mist: #f0d9a9; /* warm attention badge background */
   --color-mist: #f2efeb; /* warm neutral surface */
+  --color-caramel: #a9714b; /* Biscuit's coat (mascots) */
 
   /* Softer, more diffuse card shadow */
   --shadow-soft: 0 10px 30px -14px rgb(40 61 59 / 0.14);

@@ -7,6 +7,7 @@ import {
   STATUS_STYLES,
   urgencyStyle,
 } from "@/components/badges";
+import { BiscuitMascot } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import { deleteEvent, updateEvent, updateEventStatus } from "./actions";
@@ -226,7 +227,7 @@ export function EventsList({ events }: { events: EventRow[] }) {
 
       {visible.length === 0 ? (
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
-          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
+          <BiscuitMascot className="mx-auto mb-3 size-24" />
           <p className="text-sm font-medium text-forest">
             {events.length === 0
               ? "No events yet"
@@ -234,7 +235,7 @@ export function EventsList({ events }: { events: EventRow[] }) {
           </p>
           <p className="mt-1 text-sm text-sage-deep">
             {events.length === 0
-              ? "Add a case competition, conference, or pipeline program to get started."
+              ? "Biscuit is sniffing around for opportunities — add a case competition, conference, or pipeline program."
               : "Try adjusting the filters."}
           </p>
         </div>

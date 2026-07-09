@@ -28,12 +28,18 @@ export function Nav() {
             <Link
               key={href}
               href={href}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                 active
-                  ? "bg-blush/60 text-forest"
+                  ? "bg-blush text-rose-deep"
                   : "text-sage-deep hover:bg-blush/30 hover:text-forest"
               }`}
             >
+              {active && (
+                <span
+                  aria-hidden
+                  className="size-1.5 rounded-full bg-rose"
+                />
+              )}
               {label}
             </Link>
           );

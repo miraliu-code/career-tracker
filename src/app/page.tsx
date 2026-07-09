@@ -153,7 +153,7 @@ export default async function DashboardPage() {
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <header className="mb-8">
           <h1 className="flex items-center gap-2.5 text-2xl font-semibold tracking-tight text-forest">
-            <SproutIcon className="size-7 text-rose" />
+            <span className="flex size-10 items-center justify-center rounded-full bg-moss text-cream"><SproutIcon className="size-5" /></span>
             Career Tracker
           </h1>
           <p className="mt-1 text-sm text-sage-deep">
@@ -165,9 +165,11 @@ export default async function DashboardPage() {
         {/* Summary metrics */}
         <section aria-label="Summary metrics" className="mb-10">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
-              <p className="flex items-center gap-1.5 text-sm font-medium text-sage-deep">
-                <BriefcaseIcon className="size-4 text-rose" />
+            <div className="rounded-2xl border border-sage/30 border-l-[3px] border-l-rose bg-blush/40 p-6 shadow-soft">
+              <p className="flex items-center gap-2 text-sm font-medium text-sage-deep">
+                <span className="flex size-7 items-center justify-center rounded-full bg-rose text-cream">
+                  <BriefcaseIcon className="size-4" />
+                </span>
                 Applications
               </p>
               <p className="mt-1 text-3xl font-semibold text-forest">
@@ -179,9 +181,11 @@ export default async function DashboardPage() {
               />
             </div>
 
-            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
-              <p className="flex items-center gap-1.5 text-sm font-medium text-sage-deep">
-                <GradCapIcon className="size-4 text-rose" />
+            <div className="rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-sage/15 p-6 shadow-soft">
+              <p className="flex items-center gap-2 text-sm font-medium text-sage-deep">
+                <span className="flex size-7 items-center justify-center rounded-full bg-sage-deep text-cream">
+                  <GradCapIcon className="size-4" />
+                </span>
                 Funding Programs
               </p>
               <p className="mt-1 text-3xl font-semibold text-forest">
@@ -193,9 +197,11 @@ export default async function DashboardPage() {
               />
             </div>
 
-            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft sm:col-span-2 lg:col-span-1">
-              <p className="flex items-center gap-1.5 text-sm font-medium text-sage-deep">
-                <HeartIcon className="size-4 text-rose" />
+            <div className="rounded-2xl border border-sage/30 border-l-[3px] border-l-rose-deep bg-rose/10 p-6 shadow-soft sm:col-span-2 lg:col-span-1">
+              <p className="flex items-center gap-2 text-sm font-medium text-sage-deep">
+                <span className="flex size-7 items-center justify-center rounded-full bg-rose-deep text-cream">
+                  <HeartIcon className="size-4" />
+                </span>
                 Follow-Ups Due
               </p>
               <p className="mt-1 text-3xl font-semibold text-forest">
@@ -217,7 +223,8 @@ export default async function DashboardPage() {
             </span>
           </h2>
           {upcomingDeadlines.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+            <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
               <p className="text-sm font-medium text-forest">
                 Nothing due in the next 30 days
               </p>
@@ -226,7 +233,7 @@ export default async function DashboardPage() {
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
+            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 border-l-[3px] border-l-moss bg-white shadow-soft">
               {upcomingDeadlines.map((item) => (
                 <li
                   key={item.key}
@@ -277,7 +284,8 @@ export default async function DashboardPage() {
             Needs Follow-Up
           </h2>
           {needsFollowup.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+            <div className="relative overflow-hidden rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <span aria-hidden className="pointer-events-none absolute -top-8 left-1/2 size-32 -translate-x-1/2 rounded-full bg-blush/60 blur-2xl" />
               <p className="text-sm font-medium text-forest">
                 All caught up
               </p>
@@ -286,7 +294,7 @@ export default async function DashboardPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-sage/30 bg-white shadow-soft">
+            <div className="overflow-x-auto rounded-2xl border border-sage/30 border-l-[3px] border-l-moss bg-white shadow-soft">
               <table className="w-full min-w-[36rem] text-left text-sm">
                 <thead>
                   <tr className="border-b border-sage/30 text-xs uppercase tracking-wide text-sage-deep">

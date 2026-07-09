@@ -35,7 +35,7 @@ export function DeleteCompany({
       type="button"
       onClick={handleDelete}
       disabled={pending}
-      className="rounded-xl border border-rose/30 bg-white px-4 py-2 text-sm font-medium text-rose hover:bg-blush/40 disabled:opacity-50"
+      className="rounded-full border border-rose/30 bg-white px-4 py-2 text-sm font-medium text-rose hover:bg-blush/40 disabled:opacity-50"
     >
       {pending ? "Deleting…" : "Delete"}
     </button>

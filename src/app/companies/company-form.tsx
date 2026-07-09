@@ -134,7 +134,7 @@ export function CompanyForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white hover:bg-forest-soft disabled:opacity-50"
+          className="rounded-full bg-rose px-4 py-2 text-sm font-medium text-cream hover:bg-rose-deep disabled:opacity-50"
         >
           {pending ? "Saving…" : submitLabel}
         </button>
@@ -142,7 +142,7 @@ export function CompanyForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-xl px-4 py-2 text-sm font-medium text-sage-deep hover:bg-blush/40"
+            className="rounded-full px-4 py-2 text-sm font-medium text-sage-deep hover:bg-blush/40"
           >
             Cancel
           </button>

@@ -56,7 +56,7 @@ export function ContactForm({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="contact-name" className={LABEL_CLASSES}>
-            Name <span className="text-red-500">*</span>
+            Name <span className="text-rose">*</span>
           </label>
           <input
             id="contact-name"
@@ -174,7 +174,7 @@ export function ContactForm({
       </div>
 
       {state.error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>
+        <p className="text-sm text-rose">{state.error}</p>
       )}
 
       <div className="flex items-center gap-2">

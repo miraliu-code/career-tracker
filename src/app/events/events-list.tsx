@@ -44,10 +44,10 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const CATEGORY_STYLES: Record<string, string> = {
   case_competition:
-    "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
-  conference: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+    "bg-blush text-rose-deep",
+  conference: "bg-forest-mist text-forest",
   pipeline_program:
-    "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300",
+    "bg-moss-mist text-moss",
 };
 
 function CategoryBadge({ category }: { category: string | null }) {
@@ -71,7 +71,7 @@ function DeadlineCell({ deadline }: { deadline: string }) {
         : `${days}d left`;
   return (
     <span className="inline-flex items-center gap-2">
-      <span className="text-sm tabular-nums text-zinc-600 dark:text-zinc-300">
+      <span className="text-sm tabular-nums text-sage-deep">
         {formatDate(deadline)}
       </span>
       <span
@@ -99,7 +99,7 @@ function QuickStatus({ id, status }: { id: number; status: string }) {
         setValue(next);
         startTransition(() => updateEventStatus(id, next));
       }}
-      className={`cursor-pointer rounded-full border-0 py-0.5 pl-2.5 pr-7 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-60 ${STATUS_STYLES[value] ?? STATUS_STYLES.not_started}`}
+      className={`cursor-pointer rounded-full border-0 py-0.5 pl-2.5 pr-7 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-rose/40 disabled:opacity-60 ${STATUS_STYLES[value] ?? STATUS_STYLES.not_started}`}
     >
       {STATUS_FILTERS.filter((s) => s !== "all").map((s) => (
         <option key={s} value={s}>
@@ -125,8 +125,8 @@ function FilterPill({
       onClick={onClick}
       className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
         active
-          ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
-          : "border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
+          ? "bg-forest text-white"
+          : "border border-sage/50 bg-white text-sage-deep hover:bg-blush/30"
       }`}
     >
       {label}
@@ -193,7 +193,7 @@ export function EventsList({ events }: { events: EventRow[] }) {
           </div>
           <span
             aria-hidden
-            className="mx-1 hidden h-4 w-px bg-zinc-300 sm:block dark:bg-zinc-700"
+            className="mx-1 hidden h-4 w-px bg-sage/50 sm:block"
           />
           <div
             role="group"
@@ -210,13 +210,13 @@ export function EventsList({ events }: { events: EventRow[] }) {
             ))}
           </div>
         </div>
-        <label className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+        <label className="flex items-center gap-2 text-sm text-sage-deep">
           Sort by
           <select
             aria-label="Sort by"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortBy)}
-            className="rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+            className="rounded-xl border border-sage/50 bg-white px-2 py-1 text-sm text-forest focus:border-rose/60 focus:outline-none"
           >
             <option value="deadline">Deadline (soonest first)</option>
             <option value="name">Name</option>
@@ -225,32 +225,32 @@ export function EventsList({ events }: { events: EventRow[] }) {
       </div>
 
       {visible.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+        <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+          <p className="text-sm font-medium text-forest">
             {events.length === 0
               ? "No events yet"
               : "No events match these filters"}
           </p>
-          <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
+          <p className="mt-1 text-sm text-sage-deep">
             {events.length === 0
-              ? "Add a case competition, conference, or pipeline program to start tracking."
-              : "Try different filters."}
+              ? "Add a case competition, conference, or pipeline program to get started."
+              : "Try adjusting the filters."}
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
+        <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
           {visible.map((event) =>
             editingId === event.id ? (
-              <li key={event.id} className="bg-zinc-50 p-5 dark:bg-zinc-800/40">
+              <li key={event.id} className="bg-mist/60 p-6">
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+                  <h3 className="text-base font-semibold text-forest">
                     Edit Event
                   </h3>
                   <button
                     type="button"
                     onClick={() => handleDelete(event)}
                     disabled={deletePending}
-                    className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:bg-zinc-900 dark:text-red-400 dark:hover:bg-red-950"
+                    className="rounded-xl border border-rose/30 bg-white px-3 py-1.5 text-sm font-medium text-rose hover:bg-blush/40 disabled:opacity-50"
                   >
                     {deletePending ? "Deleting…" : "Delete"}
                   </button>
@@ -274,15 +274,15 @@ export function EventsList({ events }: { events: EventRow[] }) {
                     setEditingId(event.id);
                   }
                 }}
-                className="flex cursor-pointer flex-col gap-2 p-4 transition-colors hover:bg-zinc-50 sm:flex-row sm:items-center sm:justify-between dark:hover:bg-zinc-800/60"
+                className="flex cursor-pointer flex-col gap-2 p-4 transition-colors hover:bg-blush/20 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <p className="flex flex-wrap items-center gap-2 font-medium text-zinc-900 dark:text-zinc-50">
+                  <p className="flex flex-wrap items-center gap-2 font-medium text-forest">
                     <span className="truncate">{event.name}</span>
                     <CategoryBadge category={event.category} />
                   </p>
                   {(event.organization || event.location) && (
-                    <p className="mt-0.5 truncate text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-0.5 truncate text-sm text-sage-deep">
                       {[event.organization, event.location]
                         .filter(Boolean)
                         .join(" · ")}

@@ -6,6 +6,12 @@ import {
   STATUS_STYLES,
   urgencyStyle,
 } from "@/components/badges";
+import {
+  BriefcaseIcon,
+  GradCapIcon,
+  HeartIcon,
+  SproutIcon,
+} from "@/components/icons";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -143,25 +149,28 @@ export default async function DashboardPage() {
     .sort((a, b) => a.nextFollowupDate.localeCompare(b.nextFollowupDate));
 
   return (
-    <div className="flex-1 bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex-1">
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <header className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="flex items-center gap-2.5 text-2xl font-semibold tracking-tight text-forest">
+            <SproutIcon className="size-7 text-rose" />
             Career Tracker
           </h1>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            Applications, funding programs, and follow-ups at a glance.
+          <p className="mt-1 text-sm text-sage-deep">
+            Your applications, funding, and follow-ups — all growing in one
+            place.
           </p>
         </header>
 
         {/* Summary metrics */}
         <section aria-label="Summary metrics" className="mb-10">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-              <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-sage-deep">
+                <BriefcaseIcon className="size-4 text-rose" />
                 Applications
               </p>
-              <p className="mt-1 text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
+              <p className="mt-1 text-3xl font-semibold text-forest">
                 {allApplications.length}
               </p>
               <StatusBreakdown
@@ -170,11 +179,12 @@ export default async function DashboardPage() {
               />
             </div>
 
-            <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-              <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-sage-deep">
+                <GradCapIcon className="size-4 text-rose" />
                 Funding Programs
               </p>
-              <p className="mt-1 text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
+              <p className="mt-1 text-3xl font-semibold text-forest">
                 {allFunding.length}
               </p>
               <StatusBreakdown
@@ -183,14 +193,15 @@ export default async function DashboardPage() {
               />
             </div>
 
-            <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:col-span-2 lg:col-span-1">
-              <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft sm:col-span-2 lg:col-span-1">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-sage-deep">
+                <HeartIcon className="size-4 text-rose" />
                 Follow-Ups Due
               </p>
-              <p className="mt-1 text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
+              <p className="mt-1 text-3xl font-semibold text-forest">
                 {followupSoonCount}
               </p>
-              <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-4 text-xs text-sage-deep">
                 Contacts overdue or due within the next 7 days
               </p>
             </div>
@@ -199,34 +210,34 @@ export default async function DashboardPage() {
 
         {/* Upcoming deadlines */}
         <section aria-label="Upcoming deadlines" className="mb-10">
-          <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+          <h2 className="mb-4 text-lg font-semibold text-forest">
             Upcoming Deadlines{" "}
-            <span className="font-normal text-zinc-400 dark:text-zinc-500">
+            <span className="font-normal text-sage">
               (Next 30 Days)
             </span>
           </h2>
           {upcomingDeadlines.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+              <p className="text-sm font-medium text-forest">
                 Nothing due in the next 30 days
               </p>
-              <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
+              <p className="mt-1 text-sm text-sage-deep">
                 Enjoy the breathing room — or go find the next opportunity.
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
+            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
               {upcomingDeadlines.map((item) => (
                 <li
                   key={item.key}
                   className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-medium text-zinc-900 dark:text-zinc-50">
+                    <p className="truncate font-medium text-forest">
                       {item.title}
                     </p>
                     {item.company ? (
-                      <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-0.5 text-sm text-sage-deep">
                         <CompanyLabel
                           name={item.company.name}
                           industry={item.company.industry}
@@ -234,7 +245,7 @@ export default async function DashboardPage() {
                       </p>
                     ) : item.eligibilityTags &&
                       item.eligibilityTags.length > 0 ? (
-                      <p className="mt-0.5 truncate text-sm text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-0.5 truncate text-sm text-sage-deep">
                         {item.eligibilityTags.join(" · ")}
                       </p>
                     ) : null}
@@ -243,13 +254,13 @@ export default async function DashboardPage() {
                     <span
                       className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                         item.kind === "application"
-                          ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300"
-                          : "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300"
+                          ? "bg-blush text-rose-deep"
+                          : "bg-moss-mist text-moss"
                       }`}
                     >
                       {item.kind === "application" ? "Application" : "Funding"}
                     </span>
-                    <span className="text-sm tabular-nums text-zinc-600 dark:text-zinc-300">
+                    <span className="text-sm tabular-nums text-sage-deep">
                       {formatDate(item.deadline)}
                     </span>
                     <DaysRemaining days={item.daysRemaining} />
@@ -262,30 +273,30 @@ export default async function DashboardPage() {
 
         {/* Needs follow-up */}
         <section aria-label="Needs follow-up">
-          <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+          <h2 className="mb-4 text-lg font-semibold text-forest">
             Needs Follow-Up
           </h2>
           {needsFollowup.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+              <p className="text-sm font-medium text-forest">
                 All caught up
               </p>
-              <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
-                No contacts are due for a follow-up today.
+              <p className="mt-1 text-sm text-sage-deep">
+                No follow-ups due today — nicely done.
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="overflow-x-auto rounded-2xl border border-sage/30 bg-white shadow-soft">
               <table className="w-full min-w-[36rem] text-left text-sm">
                 <thead>
-                  <tr className="border-b border-zinc-200 text-xs uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+                  <tr className="border-b border-sage/30 text-xs uppercase tracking-wide text-sage-deep">
                     <th className="px-4 py-3 font-medium">Name</th>
                     <th className="px-4 py-3 font-medium">Company</th>
                     <th className="px-4 py-3 font-medium">Last Contact</th>
                     <th className="px-4 py-3 font-medium">Follow-Up Due</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                <tbody className="divide-y divide-sage/25">
                   {needsFollowup.map((contact) => {
                     const daysOverdue = -daysFromToday(contact.nextFollowupDate);
                     const company = contact.companyId
@@ -293,10 +304,10 @@ export default async function DashboardPage() {
                       : null;
                     return (
                       <tr key={contact.id}>
-                        <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-50">
+                        <td className="px-4 py-3 font-medium text-forest">
                           {contact.name}
                         </td>
-                        <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                        <td className="px-4 py-3 text-sage-deep">
                           {company ? (
                             <CompanyLabel
                               name={company.name}
@@ -306,14 +317,14 @@ export default async function DashboardPage() {
                             "—"
                           )}
                         </td>
-                        <td className="px-4 py-3 tabular-nums text-zinc-600 dark:text-zinc-300">
+                        <td className="px-4 py-3 tabular-nums text-sage-deep">
                           {contact.lastContactDate
                             ? formatDate(contact.lastContactDate)
                             : "—"}
                         </td>
                         <td className="px-4 py-3">
                           <span className="inline-flex items-center gap-2">
-                            <span className="tabular-nums text-red-600 dark:text-red-400">
+                            <span className="tabular-nums text-rose">
                               {formatDate(contact.nextFollowupDate)}
                             </span>
                             <span

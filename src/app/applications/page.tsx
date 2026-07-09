@@ -1,5 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 
+import { BriefcaseIcon } from "@/components/icons";
 import { db } from "@/db";
 import { applications, companies } from "@/db/schema";
 
@@ -46,13 +47,14 @@ export default async function ApplicationsPage() {
   }));
 
   return (
-    <div className="flex-1 bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex-1">
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <header className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="flex items-center gap-2.5 text-2xl font-semibold tracking-tight text-forest">
+            <BriefcaseIcon className="size-7 text-rose" />
             Applications
           </h1>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-sm text-sage-deep">
             {applicationRows.length}{" "}
             {applicationRows.length === 1 ? "application" : "applications"}{" "}
             tracked.

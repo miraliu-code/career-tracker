@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Warm palette */
+  --color-forest: #283d3b; /* primary text, nav, headers, primary buttons */
+  --color-forest-soft: #3e5654; /* primary button hover */
+  --color-forest-mist: #e1eae8; /* calm badge background */
+  --color-sage: #919682; /* borders, dots, decorative only (fails AA as text) */
+  --color-sage-deep: #5c6153; /* secondary/muted text (AA on cream/white) */
+  --color-sage-mist: #eaebe4; /* neutral badge background */
+  --color-rose: #904e55; /* primary accent, links, urgent/negative */
+  --color-rose-deep: #7a3e45; /* accent text on blush/rose-mist */
+  --color-rose-mist: #f6e4e6; /* negative badge background */
+  --color-blush: #f7cdd4; /* soft highlight backgrounds, hover states */
+  --color-cream: #fbf8f6; /* page background */
+  --color-moss: #4a6b4f; /* positive text (offer/awarded/accepted) */
+  --color-moss-mist: #e4ede4; /* positive badge background */
+  --color-honey: #7e5a2e; /* warm attention text (interviewing, 4-7d) */
+  --color-honey-mist: #f5e9d8; /* warm attention badge background */
+  --color-mist: #f2efeb; /* warm neutral surface */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Softer, more diffuse card shadow */
+  --shadow-soft: 0 10px 30px -14px rgb(40 61 59 / 0.14);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-quicksand), var(--font-nunito), ui-sans-serif,
+    system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-forest);
+  font-family: var(--font-sans);
+}
+
+/* Quicksand for headings, nav, and buttons; Nunito everywhere else. */
+h1,
+h2,
+h3,
+h4,
+nav,
+button {
+  font-family: var(--font-heading);
 }

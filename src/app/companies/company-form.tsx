@@ -42,9 +42,9 @@ export function CompanyForm({
         <div className="sm:col-span-2">
           <label
             htmlFor="company-name"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="mb-1 block text-sm font-medium text-forest"
           >
-            Name <span className="text-red-500">*</span>
+            Name <span className="text-rose">*</span>
           </label>
           <input
             id="company-name"
@@ -59,7 +59,7 @@ export function CompanyForm({
         <div>
           <label
             htmlFor="company-industry"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="mb-1 block text-sm font-medium text-forest"
           >
             Industry
           </label>
@@ -75,7 +75,7 @@ export function CompanyForm({
         <div>
           <label
             htmlFor="company-hq"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="mb-1 block text-sm font-medium text-forest"
           >
             HQ Location
           </label>
@@ -91,7 +91,7 @@ export function CompanyForm({
         <div>
           <label
             htmlFor="company-tier"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="mb-1 block text-sm font-medium text-forest"
           >
             Dream Tier
           </label>
@@ -111,7 +111,7 @@ export function CompanyForm({
         <div className="sm:col-span-2">
           <label
             htmlFor="company-notes"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="mb-1 block text-sm font-medium text-forest"
           >
             Notes
           </label>
@@ -127,14 +127,14 @@ export function CompanyForm({
       </div>
 
       {state.error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>
+        <p className="text-sm text-rose">{state.error}</p>
       )}
 
       <div className="flex items-center gap-2">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="rounded-xl bg-forest px-4 py-2 text-sm font-medium text-white hover:bg-forest-soft disabled:opacity-50"
         >
           {pending ? "Saving…" : submitLabel}
         </button>
@@ -142,7 +142,7 @@ export function CompanyForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="rounded-xl px-4 py-2 text-sm font-medium text-sage-deep hover:bg-blush/40"
           >
             Cancel
           </button>

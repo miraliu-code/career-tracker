@@ -56,7 +56,7 @@ export function ApplicationForm({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="app-role" className={LABEL_CLASSES}>
-            Role Title <span className="text-red-500">*</span>
+            Role Title <span className="text-rose">*</span>
           </label>
           <input
             id="app-role"
@@ -176,7 +176,7 @@ export function ApplicationForm({
       </div>
 
       {state.error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>
+        <p className="text-sm text-rose">{state.error}</p>
       )}
 
       <div className="flex items-center gap-2">

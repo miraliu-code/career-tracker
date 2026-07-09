@@ -11,21 +11,15 @@ export const STATUS_LABELS: Record<string, string> = {
 };
 
 export const STATUS_STYLES: Record<string, string> = {
-  not_started:
-    "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
-  applied: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  interviewing:
-    "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
-  offer:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  awarded:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  rejected: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300",
-  accepted:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  attending:
-    "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300",
-  completed: "bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
+  not_started: "bg-sage-mist text-sage-deep",
+  applied: "bg-forest-mist text-forest",
+  interviewing: "bg-honey-mist text-honey",
+  offer: "bg-moss-mist text-moss",
+  awarded: "bg-moss-mist text-moss",
+  rejected: "bg-rose-mist text-rose-deep",
+  accepted: "bg-moss-mist text-moss",
+  attending: "bg-blush text-forest",
+  completed: "bg-mist text-sage-deep",
 };
 
 export function StatusBadge({ status }: { status: string }) {
@@ -44,7 +38,7 @@ const INDUSTRY_DOTS = {
   communications: "bg-purple-500",
   international: "bg-yellow-500",
   consumer: "bg-orange-500",
-  other: "bg-zinc-400 dark:bg-zinc-500",
+  other: "bg-sage",
 } as const;
 
 type IndustryCategory = keyof typeof INDUSTRY_DOTS;
@@ -97,11 +91,10 @@ export const CONNECTION_LABELS: Record<string, string> = {
 };
 
 const CONNECTION_STYLES: Record<string, string> = {
-  alum: "bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
-  recruiter: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  mentor:
-    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
-  other: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+  alum: "bg-blush text-rose-deep",
+  recruiter: "bg-forest-mist text-forest",
+  mentor: "bg-moss-mist text-moss",
+  other: "bg-sage-mist text-sage-deep",
 };
 
 export function ConnectionBadge({ type }: { type: string | null }) {
@@ -116,19 +109,19 @@ export function ConnectionBadge({ type }: { type: string | null }) {
 }
 
 /**
- * Urgency colors for deadline/follow-up badges: red for overdue or within
- * 3 days, amber for 4-7 days, neutral beyond that.
+ * Urgency colors for deadline/follow-up badges: rose for overdue or within
+ * 3 days, honey for 4-7 days, neutral beyond that.
  */
 export function urgencyStyle(daysRemaining: number): string {
-  if (daysRemaining <= 3) return "bg-red-600 text-white";
-  if (daysRemaining <= 7) return "bg-amber-400 text-amber-950";
-  return "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300";
+  if (daysRemaining <= 3) return "bg-rose text-white";
+  if (daysRemaining <= 7) return "bg-honey text-white";
+  return "bg-mist text-sage-deep";
 }
 
 const TIER_STYLES: Record<string, string> = {
-  A: "bg-yellow-100 text-yellow-800 ring-1 ring-inset ring-yellow-400/40 dark:bg-yellow-950 dark:text-yellow-300",
-  B: "bg-zinc-200 text-zinc-700 ring-1 ring-inset ring-zinc-400/40 dark:bg-zinc-700 dark:text-zinc-200",
-  C: "bg-orange-100 text-orange-800 ring-1 ring-inset ring-orange-400/40 dark:bg-orange-950 dark:text-orange-300",
+  A: "bg-honey-mist text-honey ring-1 ring-inset ring-honey/30",
+  B: "bg-sage-mist text-sage-deep ring-1 ring-inset ring-sage/40",
+  C: "bg-blush text-rose-deep ring-1 ring-inset ring-rose/25",
 };
 
 export function TierBadge({ tier }: { tier: string | null }) {

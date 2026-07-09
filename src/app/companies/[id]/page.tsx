@@ -37,23 +37,23 @@ export default async function CompanyDetailPage({
   if (!company) notFound();
 
   return (
-    <div className="flex-1 bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex-1">
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <Link
           href="/companies"
-          className="mb-6 inline-block text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+          className="mb-6 inline-block text-sm text-sage-deep hover:text-rose"
         >
           ← All companies
         </Link>
 
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-forest">
               <IndustryDot industry={company.industry} />
               <span className="truncate">{company.name}</span>
               <TierBadge tier={company.dreamTier} />
             </h1>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 text-sm text-sage-deep">
               {[company.industry, company.hqLocation]
                 .filter(Boolean)
                 .join(" · ") || "No details yet"}
@@ -84,11 +84,11 @@ export default async function CompanyDetailPage({
 
         {company.notes && (
           <section className="mb-10">
-            <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+            <h2 className="mb-4 text-lg font-semibold text-forest">
               Notes
             </h2>
-            <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-              <p className="whitespace-pre-wrap text-sm text-zinc-600 dark:text-zinc-300">
+            <div className="rounded-2xl border border-sage/30 bg-white p-6 shadow-soft">
+              <p className="whitespace-pre-wrap text-sm text-sage-deep">
                 {company.notes}
               </p>
             </div>
@@ -96,30 +96,30 @@ export default async function CompanyDetailPage({
         )}
 
         <section className="mb-10" aria-label="Linked applications">
-          <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+          <h2 className="mb-4 text-lg font-semibold text-forest">
             Applications{" "}
-            <span className="font-normal text-zinc-400 dark:text-zinc-500">
+            <span className="font-normal text-sage">
               ({linkedApplications.length})
             </span>
           </h2>
           {linkedApplications.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-              <p className="text-sm text-zinc-400 dark:text-zinc-500">
+            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+              <p className="text-sm text-sage-deep">
                 No applications linked to this company yet.
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
+            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
               {linkedApplications.map((app) => (
                 <li
                   key={app.id}
                   className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-medium text-zinc-900 dark:text-zinc-50">
+                    <p className="truncate font-medium text-forest">
                       {app.roleTitle}
                     </p>
-                    <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-0.5 text-sm text-sage-deep">
                       {[
                         app.type === "new_grad"
                           ? "New grad"
@@ -134,7 +134,7 @@ export default async function CompanyDetailPage({
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                     {app.deadline && (
-                      <span className="text-sm tabular-nums text-zinc-600 dark:text-zinc-300">
+                      <span className="text-sm tabular-nums text-sage-deep">
                         Due {formatDate(app.deadline)}
                       </span>
                     )}
@@ -147,30 +147,30 @@ export default async function CompanyDetailPage({
         </section>
 
         <section aria-label="Linked contacts">
-          <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+          <h2 className="mb-4 text-lg font-semibold text-forest">
             Contacts{" "}
-            <span className="font-normal text-zinc-400 dark:text-zinc-500">
+            <span className="font-normal text-sage">
               ({linkedContacts.length})
             </span>
           </h2>
           {linkedContacts.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-900">
-              <p className="text-sm text-zinc-400 dark:text-zinc-500">
+            <div className="rounded-2xl border border-dashed border-sage/50 bg-white p-8 text-center">
+              <p className="text-sm text-sage-deep">
                 No contacts linked to this company yet.
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-900">
+            <ul className="divide-y divide-sage/25 overflow-hidden rounded-2xl border border-sage/30 bg-white shadow-soft">
               {linkedContacts.map((contact) => (
                 <li
                   key={contact.id}
                   className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-medium text-zinc-900 dark:text-zinc-50">
+                    <p className="truncate font-medium text-forest">
                       {contact.name}
                     </p>
-                    <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-0.5 text-sm text-sage-deep">
                       {[
                         contact.role,
                         contact.connectionType
@@ -181,7 +181,7 @@ export default async function CompanyDetailPage({
                         .join(" · ")}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-600 sm:justify-end dark:text-zinc-300">
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-sage-deep sm:justify-end">
                     {contact.lastContactDate && (
                       <span className="tabular-nums">
                         Last contact {formatDate(contact.lastContactDate)}

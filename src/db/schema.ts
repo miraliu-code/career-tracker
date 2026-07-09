@@ -14,6 +14,10 @@ export const companies = pgTable("companies", {
   hqLocation: text("hq_location"),
   dreamTier: text("dream_tier", { enum: ["A", "B", "C"] }),
   notes: text("notes"),
+  jobBoardType: text("job_board_type", {
+    enum: ["greenhouse", "lever", "none"],
+  }),
+  jobBoardSlug: text("job_board_slug"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -77,6 +81,20 @@ export const events = pgTable("events", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const alertFindings = pgTable("alert_findings", {
+  id: serial("id").primaryKey(),
+  gmailMessageId: text("gmail_message_id").notNull().unique(),
+  subject: text("subject"),
+  sender: text("sender"),
+  receivedAt: timestamp("received_at"),
+  companyId: integer("company_id").references(() => companies.id),
+  matchedCompany: text("matched_company"),
+  signal: text("signal", { enum: ["deadline", "opening"] }),
+  excerpt: text("excerpt"),
+  status: text("status", { enum: ["new", "reviewed"] }).default("new"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
 export type Application = typeof applications.$inferSelect;
@@ -87,3 +105,5 @@ export type FundingProgram = typeof fundingPrograms.$inferSelect;
 export type NewFundingProgram = typeof fundingPrograms.$inferInsert;
 export type Event = typeof events.$inferSelect;
 export type NewEvent = typeof events.$inferInsert;
+export type AlertFinding = typeof alertFindings.$inferSelect;
+export type NewAlertFinding = typeof alertFindings.$inferInsert;

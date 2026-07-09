@@ -1,4 +1,7 @@
+import { desc, eq } from "drizzle-orm";
+
 import { db } from "@/db";
+import { alertFindings } from "@/db/schema";
 import type { Application, Contact, FundingProgram } from "@/db/schema";
 import {
   CompanyLabel,
@@ -17,6 +20,8 @@ import {
   SproutIcon,
 } from "@/components/icons";
 import { daysFromToday, formatDate } from "@/lib/dates";
+
+import { InboxSignals } from "./inbox-signals";
 
 export const dynamic = "force-dynamic";
 
@@ -92,12 +97,18 @@ function DaysRemaining({ days }: { days: number }) {
 }
 
 export default async function DashboardPage() {
-  const [allApplications, allFunding, allContacts, allCompanies] =
+  const [allApplications, allFunding, allContacts, allCompanies, newSignals] =
     await Promise.all([
       db.query.applications.findMany(),
       db.query.fundingPrograms.findMany(),
       db.query.contacts.findMany(),
       db.query.companies.findMany(),
+      db
+        .select()
+        .from(alertFindings)
+        .where(eq(alertFindings.status, "new"))
+        .orderBy(desc(alertFindings.receivedAt))
+        .limit(10),
     ]);
 
   const companyById = new Map(allCompanies.map((c) => [c.id, c]));
@@ -165,6 +176,8 @@ export default async function DashboardPage() {
             place.
           </p>
         </header>
+
+        <InboxSignals findings={newSignals} />
 
         {/* Summary metrics */}
         <section aria-label="Summary metrics" className="mb-10">

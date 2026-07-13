@@ -1,7 +1,8 @@
 import { desc, eq } from "drizzle-orm";
+import Link from "next/link";
 
 import { db } from "@/db";
-import { alertFindings } from "@/db/schema";
+import { alertFindings, interviews } from "@/db/schema";
 import type { Application, Contact, FundingProgram } from "@/db/schema";
 import {
   CompanyLabel,
@@ -16,12 +17,16 @@ import {
 } from "@/components/mascots";
 import {
   BriefcaseIcon,
+  ChatIcon,
   GradCapIcon,
   HeartIcon,
   SproutIcon,
 } from "@/components/icons";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
+import { getGmailHealth } from "@/lib/system-status";
+
+import { GmailHealthBanner } from "./gmail-health-banner";
 import { InboxSignals } from "./inbox-signals";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +46,20 @@ const FUNDING_STATUSES = [
   "awarded",
   "rejected",
 ] as const;
+
+const INTERVIEW_OUTCOMES = ["pending", "passed", "rejected"] as const;
+
+const INTERVIEW_OUTCOME_LABELS: Record<string, string> = {
+  pending: "Pending",
+  passed: "Passed",
+  rejected: "Rejected",
+};
+
+const INTERVIEW_OUTCOME_STYLES: Record<string, string> = {
+  pending: "bg-honey-mist text-honey",
+  passed: "bg-moss-mist text-moss",
+  rejected: "bg-rose-mist text-rose-deep",
+};
 
 function countByStatus<T extends { status: string | null }>(
   rows: T[],
@@ -100,24 +119,37 @@ function DaysRemaining({ days }: { days: number }) {
 export default async function DashboardPage() {
   const deadlinesSeed = randomMascotSeed();
   const followupSeed = randomMascotSeed();
-  const [allApplications, allFunding, allContacts, allCompanies, newSignals] =
-    await Promise.all([
-      db.query.applications.findMany(),
-      db.query.fundingPrograms.findMany(),
-      db.query.contacts.findMany(),
-      db.query.companies.findMany(),
-      db
-        .select()
-        .from(alertFindings)
-        .where(eq(alertFindings.status, "new"))
-        .orderBy(desc(alertFindings.receivedAt))
-        .limit(10),
-    ]);
+  const [
+    allApplications,
+    allFunding,
+    allContacts,
+    allCompanies,
+    allInterviews,
+    newSignals,
+    gmailHealth,
+  ] = await Promise.all([
+    db.query.applications.findMany(),
+    db.query.fundingPrograms.findMany(),
+    db.query.contacts.findMany(),
+    db.query.companies.findMany(),
+    db.select({ outcome: interviews.outcome }).from(interviews),
+    db
+      .select()
+      .from(alertFindings)
+      .where(eq(alertFindings.status, "new"))
+      .orderBy(desc(alertFindings.receivedAt))
+      .limit(10),
+    getGmailHealth(),
+  ]);
 
   const companyById = new Map(allCompanies.map((c) => [c.id, c]));
 
   const applicationCounts = countByStatus(allApplications, APPLICATION_STATUSES);
   const fundingCounts = countByStatus(allFunding, FUNDING_STATUSES);
+  const interviewCounts = countByStatus(
+    allInterviews.map((i) => ({ status: i.outcome })),
+    INTERVIEW_OUTCOMES,
+  );
 
   const followupSoonCount = allContacts.filter(
     (c) => c.nextFollowupDate && daysFromToday(c.nextFollowupDate) <= 7,
@@ -180,12 +212,17 @@ export default async function DashboardPage() {
           </p>
         </header>
 
+        <GmailHealthBanner {...gmailHealth} />
+
         <InboxSignals findings={newSignals} />
 
         {/* Summary metrics */}
         <section aria-label="Summary metrics" className="mb-10">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-sage/30 border-l-[3px] border-l-rose bg-blush/40 p-6 shadow-soft">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Link
+              href="/applications"
+              className="group rounded-2xl border border-sage/30 border-l-[3px] border-l-rose bg-blush/40 p-6 shadow-soft transition-shadow hover:shadow-md"
+            >
               <p className="flex items-center gap-2 text-sm font-medium text-sage-deep">
                 <span className="flex size-7 items-center justify-center rounded-full bg-rose text-cream">
                   <BriefcaseIcon className="size-4" />
@@ -199,9 +236,12 @@ export default async function DashboardPage() {
                 counts={applicationCounts}
                 statuses={APPLICATION_STATUSES}
               />
-            </div>
+            </Link>
 
-            <div className="rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-sage/15 p-6 shadow-soft">
+            <Link
+              href="/funding"
+              className="group rounded-2xl border border-sage/30 border-l-[3px] border-l-sage-deep bg-sage/15 p-6 shadow-soft transition-shadow hover:shadow-md"
+            >
               <p className="flex items-center gap-2 text-sm font-medium text-sage-deep">
                 <span className="flex size-7 items-center justify-center rounded-full bg-sage-deep text-cream">
                   <GradCapIcon className="size-4" />
@@ -215,9 +255,12 @@ export default async function DashboardPage() {
                 counts={fundingCounts}
                 statuses={FUNDING_STATUSES}
               />
-            </div>
+            </Link>
 
-            <div className="rounded-2xl border border-sage/30 border-l-[3px] border-l-rose-deep bg-rose/10 p-6 shadow-soft sm:col-span-2 lg:col-span-1">
+            <Link
+              href="/contacts"
+              className="group rounded-2xl border border-sage/30 border-l-[3px] border-l-rose-deep bg-rose/10 p-6 shadow-soft transition-shadow hover:shadow-md"
+            >
               <p className="flex items-center gap-2 text-sm font-medium text-sage-deep">
                 <span className="flex size-7 items-center justify-center rounded-full bg-rose-deep text-cream">
                   <HeartIcon className="size-4" />
@@ -230,7 +273,35 @@ export default async function DashboardPage() {
               <p className="mt-4 text-xs text-sage-deep">
                 Contacts overdue or due within the next 7 days
               </p>
-            </div>
+            </Link>
+
+            <Link
+              href="/applications"
+              className="group rounded-2xl border border-sage/30 border-l-[3px] border-l-honey bg-honey-mist/30 p-6 shadow-soft transition-shadow hover:shadow-md"
+            >
+              <p className="flex items-center gap-2 text-sm font-medium text-sage-deep">
+                <span className="flex size-7 items-center justify-center rounded-full bg-honey text-cream">
+                  <ChatIcon className="size-4" />
+                </span>
+                Interviews
+              </p>
+              <p className="mt-1 text-3xl font-semibold text-forest">
+                {allInterviews.length}
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-1.5">
+                {INTERVIEW_OUTCOMES.map((outcome) => (
+                  <li
+                    key={outcome}
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${INTERVIEW_OUTCOME_STYLES[outcome]}`}
+                  >
+                    {INTERVIEW_OUTCOME_LABELS[outcome]}
+                    <span className="font-semibold">
+                      {interviewCounts[outcome]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Link>
           </div>
         </section>
 

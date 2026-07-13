@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 import {
   INPUT_CLASSES,
@@ -25,6 +25,9 @@ export type ApplicationFormValues = {
   status: string;
   resumeVersion: string | null;
   notes: string | null;
+  whyInterested: string | null;
+  myPitch: string | null;
+  questionsToAsk: string | null;
 };
 
 export function ApplicationForm({
@@ -46,6 +49,10 @@ export function ApplicationForm({
   const [state, formAction, pending] = useActionState(action, {
     error: null,
   });
+  const hasPrep = Boolean(
+    initial?.whyInterested || initial?.myPitch || initial?.questionsToAsk,
+  );
+  const [prepOpen, setPrepOpen] = useState(hasPrep);
 
   useEffect(() => {
     if (state.success) onClose?.();
@@ -172,6 +179,63 @@ export function ApplicationForm({
             placeholder="Referral status, interview prep, next steps…"
             className={INPUT_CLASSES}
           />
+        </div>
+      </div>
+
+      {/* Collapsible prep section. Fields stay mounted (just hidden) so
+          collapsing never drops their values on submit. */}
+      <div className="rounded-xl border border-sage/30 bg-mist/40 p-3">
+        <button
+          type="button"
+          onClick={() => setPrepOpen((v) => !v)}
+          aria-expanded={prepOpen}
+          className="flex w-full items-center justify-between text-sm font-medium text-forest"
+        >
+          <span>Prep notes</span>
+          <span className="text-xs text-sage-deep">
+            {prepOpen ? "Hide" : "Show"}
+          </span>
+        </button>
+        <div className={prepOpen ? "mt-3 space-y-3" : "hidden"}>
+          <div>
+            <label htmlFor="app-why" className={LABEL_CLASSES}>
+              Why I&rsquo;m interested
+            </label>
+            <textarea
+              id="app-why"
+              name="whyInterested"
+              rows={2}
+              defaultValue={initial?.whyInterested ?? ""}
+              placeholder="Why this role and company appeal to you…"
+              className={INPUT_CLASSES}
+            />
+          </div>
+          <div>
+            <label htmlFor="app-pitch" className={LABEL_CLASSES}>
+              My pitch
+            </label>
+            <textarea
+              id="app-pitch"
+              name="myPitch"
+              rows={2}
+              defaultValue={initial?.myPitch ?? ""}
+              placeholder="Your elevator pitch / positioning for this role…"
+              className={INPUT_CLASSES}
+            />
+          </div>
+          <div>
+            <label htmlFor="app-questions" className={LABEL_CLASSES}>
+              Questions to ask
+            </label>
+            <textarea
+              id="app-questions"
+              name="questionsToAsk"
+              rows={2}
+              defaultValue={initial?.questionsToAsk ?? ""}
+              placeholder="Questions you want to ask them…"
+              className={INPUT_CLASSES}
+            />
+          </div>
         </div>
       </div>
 

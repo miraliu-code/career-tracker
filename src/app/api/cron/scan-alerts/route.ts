@@ -13,6 +13,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  // runCareerAlertScan records Gmail health and never throws, so the weekly
+  // cron always completes; the response body carries the outcome.
   const result = await runCareerAlertScan(8);
   return NextResponse.json(result);
 }

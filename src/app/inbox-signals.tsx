@@ -32,9 +32,13 @@ function ScanButton() {
             try {
               const r = await scanInboxNow();
               setSummary(
-                r.newFindings > 0
-                  ? `${r.newFindings} new signal${r.newFindings === 1 ? "" : "s"} found`
-                  : `Checked ${r.scanned} new emails — nothing actionable`,
+                r.status === "auth_expired"
+                  ? "Gmail needs reconnecting"
+                  : r.status === "error"
+                    ? "Scan failed — try again"
+                    : r.newFindings > 0
+                      ? `${r.newFindings} new signal${r.newFindings === 1 ? "" : "s"} found`
+                      : `Checked ${r.scanned} new emails — nothing actionable`,
               );
             } catch {
               setSummary("Scan failed — check Gmail credentials");

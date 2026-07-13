@@ -3,9 +3,11 @@ import { inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { alertFindings, companies } from "@/db/schema";
 import {
+  GmailAuthError,
   getCareerAlertMessage,
   listCareerAlertMessageIds,
 } from "@/lib/gmail";
+import { setSystemStatus } from "@/lib/system-status";
 
 const DEADLINE_RE =
   /\b(deadline|apply by|due by|due on|closes|closing soon|last (day|chance)|final day|ends (soon|today|tomorrow))\b/i;
@@ -77,24 +79,78 @@ function matchForms(name: string): string[] {
   return [...forms].filter((f) => f.length >= 3 && !GENERIC.has(f));
 }
 
+export type GmailStatus = "ok" | "auth_expired" | "error";
+
 export type ScanResult = {
+  status: GmailStatus;
   scanned: number;
   alreadySeen: number;
   newFindings: number;
+  error?: string;
 };
+
+/** Best-effort status write — never let a status write break the caller. */
+async function recordStatus(
+  status: GmailStatus,
+  error?: string,
+): Promise<void> {
+  try {
+    await setSystemStatus("gmail_status", status);
+    if (status === "ok") {
+      await setSystemStatus("gmail_last_success", new Date().toISOString());
+    } else if (error) {
+      await setSystemStatus("gmail_last_error", error);
+    }
+  } catch {
+    // If even the status write fails (e.g. DB down) there's nothing more we
+    // can surface here; the scan result still reports the outcome.
+  }
+}
 
 /**
  * Read-only scan of the career-alerts Gmail label (last `days` days).
- * Stores a finding when a message both mentions a tracked company and
- * carries a deadline/opening signal. Dedupes on the Gmail message id.
+ * Records Gmail connection health in system_status and never throws — an
+ * auth failure or transient error resolves to a ScanResult the cron job and
+ * dashboard can act on, so the weekly job never crashes.
  */
 export async function runCareerAlertScan(days = 8): Promise<ScanResult> {
+  try {
+    const result = await scanCareerAlerts(days);
+    await recordStatus("ok");
+    return { status: "ok", ...result };
+  } catch (err) {
+    if (err instanceof GmailAuthError) {
+      await recordStatus("auth_expired", err.message);
+      return {
+        status: "auth_expired",
+        scanned: 0,
+        alreadySeen: 0,
+        newFindings: 0,
+        error: err.message,
+      };
+    }
+    const message = err instanceof Error ? err.message : String(err);
+    await recordStatus("error", message);
+    return {
+      status: "error",
+      scanned: 0,
+      alreadySeen: 0,
+      newFindings: 0,
+      error: message,
+    };
+  }
+}
+
+async function scanCareerAlerts(
+  days: number,
+): Promise<Omit<ScanResult, "status" | "error">> {
   const [allCompanies, ids] = await Promise.all([
     db.select({ id: companies.id, name: companies.name }).from(companies),
     listCareerAlertMessageIds(days),
   ]);
 
-  if (ids.length === 0) return { scanned: 0, alreadySeen: 0, newFindings: 0 };
+  if (ids.length === 0)
+    return { scanned: 0, alreadySeen: 0, newFindings: 0 };
 
   const seen = await db
     .select({ gmailMessageId: alertFindings.gmailMessageId })

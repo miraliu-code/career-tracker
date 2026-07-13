@@ -33,6 +33,31 @@ export const applications = pgTable("applications", {
   }).default("not_started"),
   resumeVersion: text("resume_version"),
   notes: text("notes"),
+  // Interview prep notes (collapsible "Prep" section in the form).
+  whyInterested: text("why_interested"),
+  myPitch: text("my_pitch"),
+  questionsToAsk: text("questions_to_ask"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const interviews = pgTable("interviews", {
+  id: serial("id").primaryKey(),
+  applicationId: integer("application_id")
+    .notNull()
+    .references(() => applications.id, { onDelete: "cascade" }),
+  round: text("round"),
+  interviewDate: date("interview_date"),
+  interviewerName: text("interviewer_name"),
+  interviewerRole: text("interviewer_role"),
+  format: text("format", {
+    enum: ["behavioral", "case", "technical", "presentation", "other"],
+  }),
+  outcome: text("outcome", {
+    enum: ["pending", "passed", "rejected"],
+  }).default("pending"),
+  questionsAsked: text("questions_asked"),
+  howItWent: text("how_it_went"),
+  lessonsLearned: text("lessons_learned"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -97,10 +122,20 @@ export const alertFindings = pgTable("alert_findings", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Simple key-value store for app-level state (e.g. Gmail connection health).
+export const systemStatus = pgTable("system_status", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: text("value"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
 export type Application = typeof applications.$inferSelect;
 export type NewApplication = typeof applications.$inferInsert;
+export type Interview = typeof interviews.$inferSelect;
+export type NewInterview = typeof interviews.$inferInsert;
 export type Contact = typeof contacts.$inferSelect;
 export type NewContact = typeof contacts.$inferInsert;
 export type FundingProgram = typeof fundingPrograms.$inferSelect;
@@ -109,3 +144,4 @@ export type Event = typeof events.$inferSelect;
 export type NewEvent = typeof events.$inferInsert;
 export type AlertFinding = typeof alertFindings.$inferSelect;
 export type NewAlertFinding = typeof alertFindings.$inferInsert;
+export type SystemStatus = typeof systemStatus.$inferSelect;

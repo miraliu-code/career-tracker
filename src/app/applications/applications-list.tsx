@@ -23,10 +23,15 @@ import {
   type ApplicationFormValues,
   type CompanyOption,
 } from "./application-form";
+import {
+  InterviewsSection,
+  type InterviewRow,
+} from "./interviews-section";
 
 export type ApplicationRow = ApplicationFormValues & {
   id: number;
   company: { id: number; name: string; industry: string | null } | null;
+  interviews: InterviewRow[];
 };
 
 const STATUS_FILTERS = [
@@ -235,6 +240,10 @@ export function ApplicationsList({
                   submitLabel="Save Changes"
                   onClose={() => setEditingId(null)}
                 />
+                <InterviewsSection
+                  applicationId={app.id}
+                  interviews={app.interviews}
+                />
               </li>
             ) : (
               <li
@@ -279,6 +288,12 @@ export function ApplicationsList({
                 </div>
                 <div className="relative flex flex-wrap items-center gap-2 sm:justify-end">
                   {app.deadline && <DeadlineCell deadline={app.deadline} />}
+                  {app.interviews.length > 0 && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-honey-mist px-2.5 py-0.5 text-xs font-medium text-honey">
+                      {app.interviews.length} interview
+                      {app.interviews.length === 1 ? "" : "s"}
+                    </span>
+                  )}
                   <QuickStatus
                     key={`${app.id}-${app.status}`}
                     id={app.id}

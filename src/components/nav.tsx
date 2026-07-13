@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { GlobalSearch } from "@/components/global-search";
 import {
   BiscuitMascot,
   SkunkMascot,
@@ -24,7 +25,11 @@ export function Nav() {
   return (
     <header className="border-b border-sage/30 bg-white">
       <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-1 px-4 py-3 sm:px-6">
-        <span className="mr-3 flex items-center gap-1.5">
+        <Link
+          href="/"
+          aria-label="Go to dashboard"
+          className="mr-3 flex items-center gap-1.5 rounded-full transition-opacity hover:opacity-80"
+        >
           <span aria-hidden className="flex items-end gap-0.5">
             <SkunkMascot className="size-7" />
             <StripesMascot className="size-7" />
@@ -33,7 +38,7 @@ export function Nav() {
           <span className="text-sm font-semibold tracking-tight text-forest">
             Career Tracker
           </span>
-        </span>
+        </Link>
         {LINKS.map(({ href, label }) => {
           const active =
             href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -57,6 +62,9 @@ export function Nav() {
             </Link>
           );
         })}
+        <div className="order-last mt-2 w-full sm:order-none sm:mt-0 sm:ml-auto sm:w-auto">
+          <GlobalSearch />
+        </div>
       </nav>
     </header>
   );

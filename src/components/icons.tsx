@@ -98,3 +98,20 @@ export function ClockIcon({ className }: { className?: string }) {
     </Icon>
   );
 }
+
+export function SearchIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.5-3.5" />
+    </Icon>
+  );
+}
+
+export function ChatIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M4 5.5h16v10H9l-4 3v-3H4z" />
+    </Icon>
+  );
+}

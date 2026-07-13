@@ -55,6 +55,9 @@ function readApplicationFields(formData: FormData) {
     status: status && isStatus(status) ? status : ("not_started" as const),
     resumeVersion: optional("resumeVersion"),
     notes: optional("notes"),
+    whyInterested: optional("whyInterested"),
+    myPitch: optional("myPitch"),
+    questionsToAsk: optional("questionsToAsk"),
   };
 }
 

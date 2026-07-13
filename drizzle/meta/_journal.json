@@ -43,6 +43,13 @@
       "when": 1783979221501,
       "tag": "0005_adorable_absorbing_man",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783980025881,
+      "tag": "0006_naive_the_phantom",
+      "breakpoints": true
     }
   ]
 }

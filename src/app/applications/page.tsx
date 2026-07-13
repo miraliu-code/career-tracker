@@ -3,7 +3,7 @@ import { asc, eq } from "drizzle-orm";
 import { BriefcaseIcon } from "@/components/icons";
 import { randomMascotSeed } from "@/components/mascots";
 import { db } from "@/db";
-import { applications, companies } from "@/db/schema";
+import { applications, companies, interviews } from "@/db/schema";
 
 import { AddApplication } from "./add-application";
 import { ApplicationsList, type ApplicationRow } from "./applications-list";
@@ -11,7 +11,7 @@ import { ApplicationsList, type ApplicationRow } from "./applications-list";
 export const dynamic = "force-dynamic";
 
 export default async function ApplicationsPage() {
-  const [rows, companyOptions] = await Promise.all([
+  const [rows, companyOptions, allInterviews] = await Promise.all([
     db
       .select({
         application: applications,
@@ -25,7 +25,30 @@ export default async function ApplicationsPage() {
       .select({ id: companies.id, name: companies.name })
       .from(companies)
       .orderBy(asc(companies.name)),
+    db
+      .select()
+      .from(interviews)
+      .orderBy(asc(interviews.interviewDate), asc(interviews.id)),
   ]);
+
+  const interviewsByApp = new Map<number, ApplicationRow["interviews"]>();
+  for (const iv of allInterviews) {
+    const list = interviewsByApp.get(iv.applicationId) ?? [];
+    list.push({
+      id: iv.id,
+      applicationId: iv.applicationId,
+      round: iv.round,
+      interviewDate: iv.interviewDate,
+      interviewerName: iv.interviewerName,
+      interviewerRole: iv.interviewerRole,
+      format: iv.format,
+      outcome: iv.outcome ?? "pending",
+      questionsAsked: iv.questionsAsked,
+      howItWent: iv.howItWent,
+      lessonsLearned: iv.lessonsLearned,
+    });
+    interviewsByApp.set(iv.applicationId, list);
+  }
 
   const applicationRows: ApplicationRow[] = rows.map((row) => ({
     id: row.application.id,
@@ -37,6 +60,10 @@ export default async function ApplicationsPage() {
     status: row.application.status ?? "not_started",
     resumeVersion: row.application.resumeVersion,
     notes: row.application.notes,
+    whyInterested: row.application.whyInterested,
+    myPitch: row.application.myPitch,
+    questionsToAsk: row.application.questionsToAsk,
+    interviews: interviewsByApp.get(row.application.id) ?? [],
     company:
       row.companyId !== null && row.companyName !== null
         ? {

@@ -1,23 +1,24 @@
-// Flat-vector pet mascots — geometric kawaii-sticker style, inline SVG only.
+// Hand-drawn pet mascots — cozy children's-book / sticker style, inline SVG
+// only. Bodies are irregular bezier blobs (not perfect circles) with a soft,
+// slightly-darker outline so they read as drawn rather than vector-perfect.
 // Colors reference the theme variables so the palette stays single-source.
-// Each mascot carries lightweight polish: a soft vertical gradient on the
-// main body shapes, a few low-opacity fur strokes, and a blurred ground
-// shadow. Idle/hover motion comes from CSS classes defined in globals.css
+// Idle/hover motion comes from CSS classes defined in globals.css
 // (mascot, mascot-breathe, mascot-blink, mascot-tail, mascot-ear) — all
 // transform/opacity only and disabled under prefers-reduced-motion.
 
 import type { CSSProperties } from "react";
 
 const FOREST = "var(--color-forest)";
-const FOREST_SOFT = "var(--color-forest-soft)";
 const CREAM = "var(--color-cream)";
 const ROSE = "var(--color-rose)";
 const BLUSH = "var(--color-blush)";
 const CARAMEL = "var(--color-caramel)";
 const HONEY = "var(--color-honey)";
-const HONEY_MIST = "var(--color-honey-mist)";
-const CALICO = "var(--color-calico)";
-const SAGE_DEEP = "var(--color-sage-deep)";
+
+// Soft, slightly-darker outlines — the hand-drawn edge.
+const FOREST_LINE = "color-mix(in srgb, var(--color-forest) 72%, black)";
+const CARAMEL_LINE = "color-mix(in srgb, var(--color-caramel) 60%, black)";
+const CREAM_LINE = "color-mix(in srgb, var(--color-cream) 78%, #b9a68f)";
 
 /** Transform origin in viewBox units for CSS animations on SVG children. */
 function origin(x: number, y: number): CSSProperties {
@@ -35,12 +36,12 @@ function BodyGradient({ id, color }: { id: string; color: string }) {
     <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
       <stop
         offset="0%"
-        style={{ stopColor: `color-mix(in srgb, ${color} 80%, white)` }}
+        style={{ stopColor: `color-mix(in srgb, ${color} 82%, white)` }}
       />
       <stop offset="55%" style={{ stopColor: color }} />
       <stop
         offset="100%"
-        style={{ stopColor: `color-mix(in srgb, ${color} 90%, black)` }}
+        style={{ stopColor: `color-mix(in srgb, ${color} 88%, black)` }}
       />
     </linearGradient>
   );
@@ -51,7 +52,7 @@ function GroundShadow({
   id,
   cx,
   rx,
-  cy = 109,
+  cy = 111,
 }: {
   id: string;
   cx: number;
@@ -77,9 +78,9 @@ function GroundShadow({
 }
 
 /**
- * Skunk — chunky tuxedo cat (boy). Wide round body, forest patches,
- * cream belly/paws, sleepy closed eyes, soft rose nose. His eyes stay
- * shut, so he skips the blink loop — the nap IS the personality.
+ * Skunk — chunky tuxedo cat (boy). Round, cozy build with a fluffy cream
+ * ruff, sleepy closed eyes, soft rose nose. His eyes stay shut, so he skips
+ * the blink loop — the nap IS the personality.
  */
 export function SkunkMascot({ className = "size-20" }: { className?: string }) {
   return (
@@ -91,83 +92,106 @@ export function SkunkMascot({ className = "size-20" }: { className?: string }) {
     >
       <defs>
         <BodyGradient id="mg-skunk" color={FOREST} />
-        <GroundShadow id="mb-skunk" cx={60} rx={34} />
+        <GroundShadow id="mb-skunk" cx={60} rx={35} />
       </defs>
-      <g className="mascot-breathe" style={origin(60, 105)}>
-        {/* tail */}
-        <g className="mascot-tail" style={origin(94, 88)}>
+      <g className="mascot-breathe" style={origin(60, 107)}>
+        {/* tail — thick, curling up on the right */}
+        <g className="mascot-tail" style={origin(90, 94)}>
           <path
-            d="M94 88 q16 -6 12 -26"
-            stroke={FOREST}
-            strokeWidth="10"
+            d="M88 98 C 106 94 110 72 99 60 C 94 55 88 58 89 65"
+            stroke={FOREST_LINE}
+            strokeWidth="14"
             strokeLinecap="round"
             fill="none"
           />
+          <path
+            d="M88 98 C 106 94 110 72 99 60 C 94 55 88 58 89 65"
+            stroke={FOREST}
+            strokeWidth="11"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* tail fur wisps */}
+          <g stroke={CREAM} strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.3">
+            <path d="M99 66 q4 2 5 6" />
+            <path d="M102 76 q4 1 5 5" />
+          </g>
         </g>
         {/* body */}
-        <ellipse cx="60" cy="82" rx="36" ry="27" fill="url(#mg-skunk)" />
-        <ellipse cx="60" cy="90" rx="23" ry="17" fill={CREAM} />
-        {/* front paws */}
-        <ellipse cx="47" cy="105" rx="8" ry="4.5" fill={CREAM} />
-        <ellipse cx="73" cy="105" rx="8" ry="4.5" fill={CREAM} />
-        {/* ears */}
-        <g className="mascot-ear" style={origin(47, 26)}>
-          <path d="M38 28 L45 7 L57 22 Z" fill={FOREST} />
-          <path d="M42.5 23 L46 12.5 L52 19.5 Z" fill={BLUSH} />
+        <path
+          d="M60 111 C 33 111 25 91 28 72 C 31 56 44 50 60 50 C 77 50 90 57 92 74 C 94 92 86 111 60 111 Z"
+          fill="url(#mg-skunk)"
+          stroke={FOREST_LINE}
+          strokeWidth="2.2"
+          strokeLinejoin="round"
+        />
+        {/* fluffy cream ruff / chest */}
+        <path
+          d="M60 108 C 45 108 39 93 42 80 C 44 71 51 66 60 66 C 69 66 76 71 78 80 C 81 93 74 108 60 108 Z"
+          fill={CREAM}
+          stroke={CREAM_LINE}
+          strokeWidth="1.2"
+          strokeLinejoin="round"
+        />
+        {/* chest ruff fur strokes */}
+        <g stroke={CREAM_LINE} strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.55">
+          <path d="M50 72 q-3 5 -2 10" />
+          <path d="M60 70 q0 6 0 11" />
+          <path d="M70 72 q3 5 2 10" />
+          <path d="M45 86 q-2 5 0 9" />
+          <path d="M75 86 q2 5 0 9" />
         </g>
-        <g className="mascot-ear" style={origin(73, 26)}>
-          <path d="M82 28 L75 7 L63 22 Z" fill={FOREST} />
-          <path d="M77.5 23 L74 12.5 L68 19.5 Z" fill={BLUSH} />
+        {/* front paws */}
+        <path d="M42 108 C 40 101 48 100 51 104 C 52 108 50 110 46 110 C 43 110 42 109 42 108 Z" fill={CREAM} stroke={CREAM_LINE} strokeWidth="1.1" />
+        <path d="M78 108 C 80 101 72 100 69 104 C 68 108 70 110 74 110 C 77 110 78 109 78 108 Z" fill={CREAM} stroke={CREAM_LINE} strokeWidth="1.1" />
+        {/* ears */}
+        <g className="mascot-ear" style={origin(45, 24)}>
+          <path d="M35 24 C 37 8 47 10 53 21 C 47 24 40 28 37 31 Z" fill={FOREST} stroke={FOREST_LINE} strokeWidth="2" strokeLinejoin="round" />
+          <path d="M41 23 C 43 15 47 16 50 21 C 46 23 43 25 41 27 Z" fill={BLUSH} opacity="0.85" />
+        </g>
+        <g className="mascot-ear" style={origin(75, 24)}>
+          <path d="M85 24 C 83 8 73 10 67 21 C 73 24 80 28 83 31 Z" fill={FOREST} stroke={FOREST_LINE} strokeWidth="2" strokeLinejoin="round" />
+          <path d="M79 23 C 77 15 73 16 70 21 C 74 23 77 25 79 27 Z" fill={BLUSH} opacity="0.85" />
         </g>
         {/* head */}
-        <circle cx="60" cy="40" r="25" fill="url(#mg-skunk)" />
+        <path
+          d="M60 13 C 41 13 31 26 31 42 C 31 59 44 68 60 68 C 76 68 89 59 89 42 C 89 26 79 13 60 13 Z"
+          fill="url(#mg-skunk)"
+          stroke={FOREST_LINE}
+          strokeWidth="2.2"
+          strokeLinejoin="round"
+        />
         {/* cream muzzle patch */}
-        <ellipse cx="60" cy="49" rx="17" ry="13" fill={CREAM} />
-        {/* fur texture */}
-        <g
-          stroke={CREAM}
-          strokeWidth="1.4"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.22"
-        >
-          <path d="M40 30 q-2 3 -1 6" />
-          <path d="M29 74 q-2 4 0 7" />
-          <path d="M91 74 q2 4 0 7" />
+        <path
+          d="M60 39 C 47 39 41 46 41 52 C 41 60 50 63 60 63 C 70 63 79 60 79 52 C 79 46 73 39 60 39 Z"
+          fill={CREAM}
+          stroke={CREAM_LINE}
+          strokeWidth="1"
+        />
+        {/* cheek fur tufts */}
+        <g stroke={CREAM} strokeWidth="1.3" strokeLinecap="round" fill="none" opacity="0.4">
+          <path d="M33 44 q-4 2 -5 5" />
+          <path d="M87 44 q4 2 5 5" />
         </g>
-        {/* sleepy closed eyes */}
-        <path
-          d="M42 37 q5 5 10 0"
-          stroke={CREAM}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M68 37 q5 5 10 0"
-          stroke={CREAM}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* rose nose, low opacity */}
-        <ellipse cx="60" cy="48" rx="3.5" ry="2.5" fill={ROSE} opacity="0.55" />
+        {/* sleepy closed eyes with lashes */}
+        <path d="M42 41 C 45 46 51 46 54 41" stroke={FOREST_LINE} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+        <path d="M66 41 C 69 46 75 46 78 41" stroke={FOREST_LINE} strokeWidth="2.4" strokeLinecap="round" fill="none" />
+        {/* blush cheeks */}
+        <ellipse cx="43" cy="52" rx="4.5" ry="3" fill={BLUSH} opacity="0.55" />
+        <ellipse cx="77" cy="52" rx="4.5" ry="3" fill={BLUSH} opacity="0.55" />
+        {/* rose nose */}
+        <path d="M56.5 48 C 56.5 51 63.5 51 63.5 48 C 63.5 46 56.5 46 56.5 48 Z" fill={ROSE} opacity="0.7" />
         {/* content little mouth */}
-        <path
-          d="M55.5 54 q2.25 2.5 4.5 0 q2.25 2.5 4.5 0"
-          stroke={FOREST}
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          fill="none"
-        />
+        <path d="M54.5 54 C 56.5 57 58.5 57 60 54.5 C 61.5 57 63.5 57 65.5 54" stroke={FOREST_LINE} strokeWidth="1.6" strokeLinecap="round" fill="none" />
       </g>
     </svg>
   );
 }
 
 /**
- * Stripes — leaner tuxedo cat (girl). Slim build, alert round eyes,
- * signature freckle dot beside her nose.
+ * Stripes — leaner tuxedo cat (girl). Slim, poised build with big alert
+ * eyes (highlight dots), a signature freckle beside her nose, and a soft
+ * cream ruff.
  */
 export function StripesMascot({
   className = "size-20",
@@ -183,13 +207,20 @@ export function StripesMascot({
     >
       <defs>
         <BodyGradient id="mg-stripes" color={FOREST} />
-        <GroundShadow id="mb-stripes" cx={60} rx={28} cy={110} />
+        <GroundShadow id="mb-stripes" cx={60} rx={29} />
       </defs>
-      <g className="mascot-breathe" style={origin(60, 106)}>
-        {/* tail */}
-        <g className="mascot-tail" style={origin(86, 90)}>
+      <g className="mascot-breathe" style={origin(60, 107)}>
+        {/* tail — slender, curling up */}
+        <g className="mascot-tail" style={origin(84, 96)}>
           <path
-            d="M86 90 q18 -4 14 -28"
+            d="M83 99 C 101 96 106 74 97 62 C 93 57 88 59 89 65"
+            stroke={FOREST_LINE}
+            strokeWidth="10"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M83 99 C 101 96 106 74 97 62 C 93 57 88 59 89 65"
             stroke={FOREST}
             strokeWidth="7"
             strokeLinecap="round"
@@ -197,63 +228,85 @@ export function StripesMascot({
           />
         </g>
         {/* slim body */}
-        <ellipse cx="60" cy="86" rx="26" ry="24" fill="url(#mg-stripes)" />
-        <ellipse cx="60" cy="93" rx="15" ry="14" fill={CREAM} />
-        {/* front paws */}
-        <ellipse cx="51" cy="107" rx="6" ry="3.5" fill={CREAM} />
-        <ellipse cx="69" cy="107" rx="6" ry="3.5" fill={CREAM} />
-        {/* ears */}
-        <g className="mascot-ear" style={origin(50, 27)}>
-          <path d="M42 30 L48 8 L59 24 Z" fill={FOREST} />
-          <path d="M46 24.5 L49 13.5 L54.5 21 Z" fill={BLUSH} />
+        <path
+          d="M60 111 C 38 111 32 93 34 78 C 36 64 47 58 60 58 C 73 58 84 64 86 78 C 88 93 82 111 60 111 Z"
+          fill="url(#mg-stripes)"
+          stroke={FOREST_LINE}
+          strokeWidth="2.2"
+          strokeLinejoin="round"
+        />
+        {/* cream ruff / chest */}
+        <path
+          d="M60 108 C 49 108 44 95 46 84 C 48 76 54 72 60 72 C 66 72 72 76 74 84 C 76 95 71 108 60 108 Z"
+          fill={CREAM}
+          stroke={CREAM_LINE}
+          strokeWidth="1.2"
+          strokeLinejoin="round"
+        />
+        {/* chest ruff fur strokes */}
+        <g stroke={CREAM_LINE} strokeWidth="1.1" strokeLinecap="round" fill="none" opacity="0.55">
+          <path d="M53 78 q-2 5 -1 9" />
+          <path d="M60 76 q0 5 0 10" />
+          <path d="M67 78 q2 5 1 9" />
         </g>
-        <g className="mascot-ear" style={origin(70, 27)}>
-          <path d="M78 30 L72 8 L61 24 Z" fill={FOREST} />
-          <path d="M74 24.5 L71 13.5 L65.5 21 Z" fill={BLUSH} />
+        {/* front paws */}
+        <path d="M48 108 C 46 102 54 101 56 105 C 57 109 54 110 51 110 C 48 110 48 109 48 108 Z" fill={CREAM} stroke={CREAM_LINE} strokeWidth="1.1" />
+        <path d="M72 108 C 74 102 66 101 64 105 C 63 109 66 110 69 110 C 72 110 72 109 72 108 Z" fill={CREAM} stroke={CREAM_LINE} strokeWidth="1.1" />
+        {/* ears */}
+        <g className="mascot-ear" style={origin(48, 26)}>
+          <path d="M39 26 C 41 10 50 12 56 23 C 50 26 44 30 41 33 Z" fill={FOREST} stroke={FOREST_LINE} strokeWidth="2" strokeLinejoin="round" />
+          <path d="M45 25 C 47 17 51 18 54 23 C 50 25 47 27 45 29 Z" fill={BLUSH} opacity="0.85" />
+        </g>
+        <g className="mascot-ear" style={origin(72, 26)}>
+          <path d="M81 26 C 79 10 70 12 64 23 C 70 26 76 30 79 33 Z" fill={FOREST} stroke={FOREST_LINE} strokeWidth="2" strokeLinejoin="round" />
+          <path d="M75 25 C 73 17 69 18 66 23 C 70 25 73 27 75 29 Z" fill={BLUSH} opacity="0.85" />
         </g>
         {/* head */}
-        <circle cx="60" cy="43" r="22" fill="url(#mg-stripes)" />
-        {/* cream muzzle patch */}
-        <ellipse cx="60" cy="51" rx="14.5" ry="11" fill={CREAM} />
-        {/* fur texture */}
-        <g
-          stroke={CREAM}
-          strokeWidth="1.3"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.22"
-        >
-          <path d="M43 32 q-2 3 -1 6" />
-          <path d="M38 80 q-2 4 0 7" />
-          <path d="M83 80 q2 4 0 7" />
-        </g>
-        {/* alert open eyes */}
-        <g className="mascot-blink" style={origin(60, 40)}>
-          <circle cx="48.5" cy="40" r="4.4" fill={CREAM} />
-          <circle cx="71.5" cy="40" r="4.4" fill={CREAM} />
-          <circle cx="49.2" cy="40.5" r="2.1" fill={FOREST} />
-          <circle cx="70.8" cy="40.5" r="2.1" fill={FOREST} />
-        </g>
-        {/* rose nose */}
-        <ellipse cx="60" cy="50" rx="3" ry="2.2" fill={ROSE} opacity="0.7" />
-        {/* signature dot marking on her nose bridge */}
-        <circle cx="64.5" cy="46" r="1.8" fill={FOREST} />
-        {/* mouth */}
         <path
-          d="M56 55.5 q2 2.2 4 0 q2 2.2 4 0"
-          stroke={FOREST}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
+          d="M60 17 C 43 17 34 29 34 44 C 34 60 46 68 60 68 C 74 68 86 60 86 44 C 86 29 77 17 60 17 Z"
+          fill="url(#mg-stripes)"
+          stroke={FOREST_LINE}
+          strokeWidth="2.2"
+          strokeLinejoin="round"
         />
+        {/* cream muzzle patch */}
+        <path
+          d="M60 43 C 49 43 44 49 44 55 C 44 62 51 64 60 64 C 69 64 76 62 76 55 C 76 49 71 43 60 43 Z"
+          fill={CREAM}
+          stroke={CREAM_LINE}
+          strokeWidth="1"
+        />
+        {/* cheek fur tufts */}
+        <g stroke={CREAM} strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.4">
+          <path d="M36 46 q-4 2 -5 5" />
+          <path d="M84 46 q4 2 5 5" />
+        </g>
+        {/* big alert eyes with highlights */}
+        <g className="mascot-blink" style={origin(60, 43)}>
+          <ellipse cx="49" cy="43" rx="5.4" ry="6" fill={CREAM} stroke={CREAM_LINE} strokeWidth="0.8" />
+          <ellipse cx="71" cy="43" rx="5.4" ry="6" fill={CREAM} stroke={CREAM_LINE} strokeWidth="0.8" />
+          <circle cx="49.4" cy="43.6" r="3.1" fill={FOREST_LINE} />
+          <circle cx="70.6" cy="43.6" r="3.1" fill={FOREST_LINE} />
+          <circle cx="50.6" cy="42" r="1.2" fill={CREAM} />
+          <circle cx="72.2" cy="42" r="1.2" fill={CREAM} />
+        </g>
+        {/* blush cheeks */}
+        <ellipse cx="44" cy="54" rx="4.3" ry="3" fill={BLUSH} opacity="0.55" />
+        <ellipse cx="76" cy="54" rx="4.3" ry="3" fill={BLUSH} opacity="0.55" />
+        {/* rose nose */}
+        <path d="M56.5 52 C 56.5 55 63.5 55 63.5 52 C 63.5 50 56.5 50 56.5 52 Z" fill={ROSE} opacity="0.8" />
+        {/* signature freckle beside her nose */}
+        <circle cx="66" cy="49" r="1.7" fill={FOREST_LINE} />
+        {/* mouth */}
+        <path d="M55.5 57 C 57.5 60 59.5 60 60 57.5 C 60.5 60 62.5 60 64.5 57" stroke={FOREST_LINE} strokeWidth="1.5" strokeLinecap="round" fill="none" />
       </g>
     </svg>
   );
 }
 
 /**
- * Biscuit — dachshund (girl). Long low caramel body, short legs,
- * long floppy ear, cream belly and muzzle.
+ * Biscuit — dachshund (girl). Long low caramel body, short legs, one long
+ * floppy ear, cream belly and muzzle, big friendly eye with a highlight.
  */
 export function BiscuitMascot({
   className = "size-20",
@@ -269,329 +322,94 @@ export function BiscuitMascot({
     >
       <defs>
         <BodyGradient id="mg-biscuit" color={CARAMEL} />
-        <GroundShadow id="mb-biscuit" cx={55} rx={44} />
+        <GroundShadow id="mb-biscuit" cx={56} rx={45} />
       </defs>
-      <g className="mascot-breathe" style={origin(55, 105)}>
-        {/* tail */}
-        <g className="mascot-tail" style={origin(14, 72)}>
+      <g className="mascot-breathe" style={origin(56, 106)}>
+        {/* tail — perky, curling up on the left */}
+        <g className="mascot-tail" style={origin(15, 72)}>
           <path
-            d="M14 72 q-9 -7 -5 -18"
+            d="M16 74 C 4 70 3 57 10 50 C 13 47 17 49 16 54"
+            stroke={CARAMEL_LINE}
+            strokeWidth="9"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M16 74 C 4 70 3 57 10 50 C 13 47 17 49 16 54"
             stroke={CARAMEL}
-            strokeWidth="6.5"
+            strokeWidth="6"
             strokeLinecap="round"
             fill="none"
           />
         </g>
+        {/* short legs (behind body) */}
+        <path d="M21 88 C 20 100 20 106 24 106 C 28 106 28 100 28 90 Z" fill={CARAMEL} stroke={CARAMEL_LINE} strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M38 90 C 37 102 37 107 41 107 C 45 107 45 101 45 91 Z" fill={CARAMEL} stroke={CARAMEL_LINE} strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M60 90 C 59 102 59 107 63 107 C 67 107 67 101 67 91 Z" fill={CARAMEL} stroke={CARAMEL_LINE} strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M75 88 C 74 100 74 106 78 106 C 82 106 82 100 82 90 Z" fill={CARAMEL} stroke={CARAMEL_LINE} strokeWidth="1.6" strokeLinejoin="round" />
         {/* long low body */}
-        <rect x="10" y="60" width="80" height="36" rx="18" fill="url(#mg-biscuit)" />
+        <path
+          d="M14 76 C 12 63 22 57 40 57 C 62 56 80 58 88 63 C 94 67 94 88 87 92 C 78 97 30 98 20 93 C 14 90 14 82 14 76 Z"
+          fill="url(#mg-biscuit)"
+          stroke={CARAMEL_LINE}
+          strokeWidth="2.2"
+          strokeLinejoin="round"
+        />
         {/* cream belly */}
-        <rect x="22" y="78" width="56" height="18" rx="9" fill={CREAM} />
-        {/* short legs */}
-        <rect x="20" y="88" width="9" height="17" rx="4.5" fill={CARAMEL} />
-        <rect x="36" y="88" width="9" height="17" rx="4.5" fill={CARAMEL} />
-        <rect x="58" y="88" width="9" height="17" rx="4.5" fill={CARAMEL} />
-        <rect x="74" y="88" width="9" height="17" rx="4.5" fill={CARAMEL} />
-        {/* head */}
-        <circle cx="92" cy="50" r="19" fill="url(#mg-biscuit)" />
-        {/* cream muzzle */}
-        <ellipse cx="101" cy="57" rx="11" ry="8" fill={CREAM} />
-        {/* fur texture */}
-        <g
-          stroke={CREAM}
-          strokeWidth="1.4"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.25"
-        >
-          <path d="M28 68 q-2 3 0 6" />
-          <path d="M48 66 q-2 3 0 6" />
-          <path d="M88 38 q-2 3 -1 6" />
+        <path
+          d="M24 82 C 24 76 30 74 40 74 C 55 74 68 75 74 78 C 78 80 78 90 72 92 C 62 95 34 95 28 92 C 24 90 24 86 24 82 Z"
+          fill={CREAM}
+          stroke={CREAM_LINE}
+          strokeWidth="1.1"
+          strokeLinejoin="round"
+        />
+        {/* body fur strokes along the back */}
+        <g stroke={CARAMEL_LINE} strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.4">
+          <path d="M30 60 q-2 3 -1 6" />
+          <path d="M46 58 q-1 3 0 6" />
+          <path d="M62 59 q1 3 0 6" />
         </g>
+        {/* head */}
+        <path
+          d="M92 32 C 79 32 71 42 71 53 C 71 65 81 71 93 71 C 105 71 112 63 112 51 C 112 40 104 32 92 32 Z"
+          fill="url(#mg-biscuit)"
+          stroke={CARAMEL_LINE}
+          strokeWidth="2.2"
+          strokeLinejoin="round"
+        />
+        {/* cream muzzle */}
+        <path
+          d="M100 54 C 92 54 88 58 88 62 C 88 66 94 68 101 68 C 108 68 112 65 112 60 C 112 56 107 54 100 54 Z"
+          fill={CREAM}
+          stroke={CREAM_LINE}
+          strokeWidth="1"
+        />
         {/* nose */}
-        <circle cx="109" cy="55" r="3" fill={FOREST} />
-        {/* eye */}
-        <g className="mascot-blink" style={origin(90, 45)}>
-          <circle cx="90" cy="45" r="2.7" fill={FOREST} />
-          <circle cx="91" cy="44.2" r="0.9" fill={CREAM} />
+        <path d="M108 57 C 105 57 105 62 109 62 C 113 62 113 57 108 57 Z" fill={FOREST_LINE} />
+        {/* eye with highlight */}
+        <g className="mascot-blink" style={origin(90, 48)}>
+          <circle cx="90" cy="48" r="3.6" fill={FOREST_LINE} />
+          <circle cx="91.2" cy="46.8" r="1.2" fill={CREAM} />
         </g>
         {/* blush cheek */}
-        <circle cx="95" cy="61" r="2.6" fill={BLUSH} />
+        <ellipse cx="94" cy="62" rx="3.4" ry="2.4" fill={BLUSH} opacity="0.6" />
         {/* long floppy ear */}
-        <g className="mascot-ear" style={origin(80, 43)}>
-          <ellipse
-            cx="79"
-            cy="55"
-            rx="7"
-            ry="14"
+        <g className="mascot-ear" style={origin(80, 42)}>
+          <path
+            d="M82 40 C 72 40 68 50 70 62 C 71 70 76 74 82 72 C 87 70 88 60 87 50 C 86 44 85 40 82 40 Z"
             fill={HONEY}
-            transform="rotate(16 79 55)"
+            stroke={CARAMEL_LINE}
+            strokeWidth="1.8"
+            strokeLinejoin="round"
           />
+          {/* ear fur strokes */}
+          <g stroke={CARAMEL_LINE} strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.4">
+            <path d="M76 50 q-1 5 0 9" />
+            <path d="M82 52 q1 5 0 9" />
+          </g>
         </g>
         {/* happy mouth */}
-        <path
-          d="M101 62 q3 2.5 6 0"
-          stroke={FOREST}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </g>
-    </svg>
-  );
-}
-
-/**
- * Baby Cat — calico kitten. Cream base coat with calico-orange and forest
- * patches, big curious eyes, sitting upright with her tail curled around
- * her front paws (so no tail sway — the curl is the pose).
- */
-export function BabyCatMascot({
-  className = "size-20",
-}: {
-  className?: string;
-}) {
-  return (
-    <svg
-      viewBox="0 0 120 120"
-      aria-hidden
-      className={`mascot ${className}`}
-      style={stagger(2.6)}
-    >
-      <defs>
-        <BodyGradient id="mg-babycat" color={CREAM} />
-        <GroundShadow id="mb-babycat" cx={60} rx={30} cy={110} />
-      </defs>
-      <g className="mascot-breathe" style={origin(60, 106)}>
-        {/* upright body */}
-        <ellipse cx="60" cy="80" rx="26" ry="27" fill="url(#mg-babycat)" />
-        {/* calico + forest body patches */}
-        <ellipse
-          cx="45"
-          cy="70"
-          rx="11"
-          ry="9"
-          fill={CALICO}
-          transform="rotate(-18 45 70)"
-        />
-        <ellipse
-          cx="76"
-          cy="87"
-          rx="9"
-          ry="7.5"
-          fill={FOREST}
-          transform="rotate(14 76 87)"
-          opacity="0.95"
-        />
-        {/* front paws */}
-        <ellipse
-          cx="52"
-          cy="104"
-          rx="7"
-          ry="4"
-          fill={CREAM}
-          stroke={SAGE_DEEP}
-          strokeWidth="0.8"
-          strokeOpacity="0.35"
-        />
-        <ellipse
-          cx="68"
-          cy="104"
-          rx="7"
-          ry="4"
-          fill={CREAM}
-          stroke={SAGE_DEEP}
-          strokeWidth="0.8"
-          strokeOpacity="0.35"
-        />
-        {/* tail curled around the paws, forest tip */}
-        <path
-          d="M84 94 q13 8 -2 12 q-16 4 -36 0"
-          stroke={CALICO}
-          strokeWidth="7"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <circle cx="46" cy="106" r="3.6" fill={FOREST} />
-        {/* ears — calico left, forest right */}
-        <g className="mascot-ear" style={origin(48, 26)}>
-          <path d="M40 30 L46 9 L58 24 Z" fill={CALICO} />
-          <path d="M44.5 24 L47.5 13.5 L53.5 21 Z" fill={BLUSH} />
-        </g>
-        <g className="mascot-ear" style={origin(72, 26)}>
-          <path d="M80 30 L74 9 L62 24 Z" fill={FOREST} />
-          <path d="M75.5 24 L72.5 13.5 L66.5 21 Z" fill={BLUSH} />
-        </g>
-        {/* head */}
-        <circle cx="60" cy="42" r="23" fill="url(#mg-babycat)" />
-        {/* head patches */}
-        <ellipse
-          cx="46"
-          cy="31"
-          rx="11"
-          ry="8"
-          fill={CALICO}
-          transform="rotate(-16 46 31)"
-        />
-        <ellipse
-          cx="74"
-          cy="29"
-          rx="8"
-          ry="6"
-          fill={FOREST}
-          transform="rotate(14 74 29)"
-        />
-        {/* fur texture */}
-        <g
-          stroke={SAGE_DEEP}
-          strokeWidth="1.3"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.18"
-        >
-          <path d="M40 84 q-2 3 0 6" />
-          <path d="M80 78 q2 3 0 6" />
-          <path d="M52 58 q-2 2 -1 5" />
-        </g>
-        {/* big curious eyes */}
-        <g className="mascot-blink" style={origin(60, 41)}>
-          <circle cx="49" cy="41" r="4.6" fill={FOREST} />
-          <circle cx="71" cy="41" r="4.6" fill={FOREST} />
-          <circle cx="50.5" cy="39.5" r="1.4" fill={CREAM} />
-          <circle cx="72.5" cy="39.5" r="1.4" fill={CREAM} />
-        </g>
-        {/* blush cheeks */}
-        <circle cx="42" cy="49" r="2.6" fill={BLUSH} />
-        <circle cx="78" cy="49" r="2.6" fill={BLUSH} />
-        {/* rose nose + mouth */}
-        <ellipse cx="60" cy="50" rx="3" ry="2.2" fill={ROSE} opacity="0.8" />
-        <path
-          d="M56 54.5 q2 2.2 4 0 q2 2.2 4 0"
-          stroke={FOREST}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </g>
-    </svg>
-  );
-}
-
-/**
- * Panther — sleek black panther (honorary pet). Sits upright like the
- * house cats but keeps the intensity: all-forest coat with a lighter
- * sheen across the shoulders, amber almond eyes with rose-gold glints.
- */
-export function PantherMascot({
-  className = "size-20",
-}: {
-  className?: string;
-}) {
-  return (
-    <svg
-      viewBox="0 0 120 120"
-      aria-hidden
-      className={`mascot ${className}`}
-      style={stagger(3.4)}
-    >
-      <defs>
-        <BodyGradient id="mg-panther" color={FOREST} />
-        <GroundShadow id="mb-panther" cx={60} rx={31} cy={110} />
-      </defs>
-      <g className="mascot-breathe" style={origin(60, 106)}>
-        {/* long tail */}
-        <g className="mascot-tail" style={origin(87, 90)}>
-          <path
-            d="M87 90 q19 -4 15 -29"
-            stroke={FOREST}
-            strokeWidth="8"
-            strokeLinecap="round"
-            fill="none"
-          />
-        </g>
-        {/* upright body */}
-        <ellipse cx="60" cy="84" rx="29" ry="25" fill="url(#mg-panther)" />
-        {/* soft chest tone instead of a light belly patch */}
-        <ellipse
-          cx="60"
-          cy="92"
-          rx="16"
-          ry="14"
-          fill={FOREST_SOFT}
-          opacity="0.45"
-        />
-        {/* sheen highlight across the shoulders */}
-        <path
-          d="M38 70 q22 -11 44 0"
-          stroke={FOREST_SOFT}
-          strokeWidth="3"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.55"
-        />
-        {/* front paws */}
-        <ellipse cx="51" cy="106" rx="6.5" ry="3.8" fill={FOREST_SOFT} opacity="0.85" />
-        <ellipse cx="69" cy="106" rx="6.5" ry="3.8" fill={FOREST_SOFT} opacity="0.85" />
-        {/* ears */}
-        <g className="mascot-ear" style={origin(49, 27)}>
-          <path d="M40 30 L47 9 L59 24 Z" fill={FOREST} />
-          <path d="M44.5 24 L47.5 13.5 L53.5 21 Z" fill={ROSE} opacity="0.35" />
-        </g>
-        <g className="mascot-ear" style={origin(71, 27)}>
-          <path d="M80 30 L73 9 L61 24 Z" fill={FOREST} />
-          <path d="M75.5 24 L72.5 13.5 L66.5 21 Z" fill={ROSE} opacity="0.35" />
-        </g>
-        {/* head */}
-        <circle cx="60" cy="42" r="23" fill="url(#mg-panther)" />
-        {/* fur texture */}
-        <g
-          stroke={CREAM}
-          strokeWidth="1.3"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.14"
-        >
-          <path d="M42 32 q-2 3 -1 6" />
-          <path d="M36 80 q-2 4 0 7" />
-          <path d="M85 80 q2 4 0 7" />
-        </g>
-        {/* focused brows */}
-        <g
-          stroke={CREAM}
-          strokeWidth="1.2"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.35"
-        >
-          <path d="M44 34.5 q4 -2 8 -0.5" />
-          <path d="M68 34 q4 -1.5 8 0.5" />
-        </g>
-        {/* amber almond eyes with rose-gold glints */}
-        <g className="mascot-blink" style={origin(60, 41)}>
-          <ellipse cx="48.5" cy="41" rx="3.9" ry="2.9" fill={HONEY_MIST} />
-          <ellipse cx="71.5" cy="41" rx="3.9" ry="2.9" fill={HONEY_MIST} />
-          <ellipse cx="48.8" cy="41" rx="1.2" ry="2.3" fill={FOREST} />
-          <ellipse cx="71.2" cy="41" rx="1.2" ry="2.3" fill={FOREST} />
-          <circle cx="47.3" cy="40" r="0.7" fill={ROSE} opacity="0.9" />
-          <circle cx="70.1" cy="40" r="0.7" fill={ROSE} opacity="0.9" />
-        </g>
-        {/* muzzle shading, rose nose, quiet mouth */}
-        <ellipse
-          cx="60"
-          cy="51"
-          rx="13"
-          ry="9"
-          fill={FOREST_SOFT}
-          opacity="0.5"
-        />
-        <ellipse cx="60" cy="49.5" rx="3" ry="2.2" fill={ROSE} opacity="0.5" />
-        <path
-          d="M56 54.5 q2 2.2 4 0 q2 2.2 4 0"
-          stroke={CREAM}
-          strokeWidth="1.4"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.55"
-        />
+        <path d="M100 63 C 102 66 105 66 107 63" stroke={FOREST_LINE} strokeWidth="1.5" strokeLinecap="round" fill="none" />
       </g>
     </svg>
   );
@@ -602,8 +420,6 @@ export const MASCOTS = [
   { name: "Skunk", Component: SkunkMascot },
   { name: "Stripes", Component: StripesMascot },
   { name: "Biscuit", Component: BiscuitMascot },
-  { name: "Baby Cat", Component: BabyCatMascot },
-  { name: "Panther", Component: PantherMascot },
 ] as const;
 
 /** Roll a fresh seed — call from server components only (per-request). */
@@ -616,7 +432,7 @@ export function mascotName(seed: number): string {
 }
 
 /**
- * Renders one of the five mascots picked by `seed`. Pages compute the seed
+ * Renders one of the mascots picked by `seed`. Pages compute the seed
  * server-side (all pages are force-dynamic, so it re-rolls per request) and
  * pass it down — client components must not call Math.random() in render.
  */

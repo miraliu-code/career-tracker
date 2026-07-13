@@ -87,6 +87,8 @@ export const CONNECTION_LABELS: Record<string, string> = {
   alum: "Alum",
   recruiter: "Recruiter",
   mentor: "Mentor",
+  colleague: "Colleague",
+  peer: "Peer",
   other: "Other",
 };
 
@@ -94,6 +96,8 @@ const CONNECTION_STYLES: Record<string, string> = {
   alum: "bg-blush text-rose-deep",
   recruiter: "bg-forest-mist text-forest",
   mentor: "bg-moss-mist text-moss",
+  colleague: "bg-honey-mist text-honey",
+  peer: "bg-rose-mist text-rose-deep",
   other: "bg-sage-mist text-sage-deep",
 };
 

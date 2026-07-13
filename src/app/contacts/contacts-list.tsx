@@ -29,6 +29,8 @@ const CONNECTION_FILTERS = [
   "alum",
   "recruiter",
   "mentor",
+  "colleague",
+  "peer",
   "other",
 ] as const;
 
@@ -268,6 +270,11 @@ export function ContactsList({
                     <ConnectionBadge type={contact.connectionType} />
                     {contact.linkedinUrl && (
                       <LinkedInLink url={contact.linkedinUrl} />
+                    )}
+                    {contact.primaryContact && (
+                      <span className="truncate text-xs font-normal text-sage-deep">
+                        {contact.primaryContact}
+                      </span>
                     )}
                   </p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-sm text-sage-deep">

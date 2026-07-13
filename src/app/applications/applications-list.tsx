@@ -10,6 +10,7 @@ import {
   urgencyStyle,
 } from "@/components/badges";
 import { CelebrationBurst } from "@/components/celebration";
+import { PdfIcon } from "@/components/icons";
 import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
@@ -288,6 +289,19 @@ export function ApplicationsList({
                 </div>
                 <div className="relative flex flex-wrap items-center gap-2 sm:justify-end">
                   {app.deadline && <DeadlineCell deadline={app.deadline} />}
+                  {app.resumeUrl && (
+                    <a
+                      href={app.resumeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      title={app.resumeFilename ?? "Resume PDF"}
+                      className="inline-flex items-center gap-1 rounded-full bg-rose-mist px-2.5 py-0.5 text-xs font-medium text-rose-deep hover:bg-blush"
+                    >
+                      <PdfIcon className="size-3.5" />
+                      PDF
+                    </a>
+                  )}
                   {app.interviews.length > 0 && (
                     <span className="inline-flex items-center gap-1 rounded-full bg-honey-mist px-2.5 py-0.5 text-xs font-medium text-honey">
                       {app.interviews.length} interview

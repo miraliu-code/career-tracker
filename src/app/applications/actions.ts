@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
 import { applications } from "@/db/schema";
+import { deleteResume } from "@/lib/resume-storage";
 
 export type ApplicationFormState = {
   error: string | null;
@@ -53,7 +54,8 @@ function readApplicationFields(formData: FormData) {
     location: optional("location"),
     deadline: deadline && /^\d{4}-\d{2}-\d{2}$/.test(deadline) ? deadline : null,
     status: status && isStatus(status) ? status : ("not_started" as const),
-    resumeVersion: optional("resumeVersion"),
+    resumeUrl: optional("resumeUrl"),
+    resumeFilename: optional("resumeFilename"),
     notes: optional("notes"),
     whyInterested: optional("whyInterested"),
     myPitch: optional("myPitch"),
@@ -93,7 +95,17 @@ export async function updateApplication(
     return { error: "Role title is required." };
   }
 
+  // If the resume changed (replaced or removed), clean up the old blob.
+  const [existing] = await db
+    .select({ resumeUrl: applications.resumeUrl })
+    .from(applications)
+    .where(eq(applications.id, id));
+
   await db.update(applications).set(fields).where(eq(applications.id, id));
+
+  if (existing?.resumeUrl && existing.resumeUrl !== fields.resumeUrl) {
+    await deleteResume(existing.resumeUrl);
+  }
 
   revalidateApplicationPages(fields.companyId);
   return { error: null, success: true };
@@ -103,7 +115,13 @@ export async function deleteApplication(id: number): Promise<void> {
   const [deleted] = await db
     .delete(applications)
     .where(eq(applications.id, id))
-    .returning({ companyId: applications.companyId });
+    .returning({
+      companyId: applications.companyId,
+      resumeUrl: applications.resumeUrl,
+    });
+
+  // Remove the associated resume file so orphans don't accumulate.
+  if (deleted?.resumeUrl) await deleteResume(deleted.resumeUrl);
 
   revalidateApplicationPages(deleted?.companyId ?? null);
 }

@@ -115,3 +115,13 @@ export function ChatIcon({ className }: { className?: string }) {
     </Icon>
   );
 }
+
+export function PdfIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M6 2.5h8l4 4v15H6z" />
+      <path d="M14 2.5v4h4" />
+      <path d="M9 13h1.2a1.3 1.3 0 0 0 0-2.6H9V17" />
+    </Icon>
+  );
+}

@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local resume upload fallback (production uses Vercel Blob)
+/public/uploads

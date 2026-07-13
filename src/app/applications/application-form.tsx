@@ -10,6 +10,7 @@ import {
 } from "@/components/form";
 
 import type { ApplicationFormState } from "./actions";
+import { ResumeUpload } from "./resume-upload";
 
 export type CompanyOption = {
   id: number;
@@ -23,7 +24,8 @@ export type ApplicationFormValues = {
   location: string | null;
   deadline: string | null;
   status: string;
-  resumeVersion: string | null;
+  resumeUrl: string | null;
+  resumeFilename: string | null;
   notes: string | null;
   whyInterested: string | null;
   myPitch: string | null;
@@ -154,16 +156,10 @@ export function ApplicationForm({
           </select>
         </div>
 
-        <div>
-          <label htmlFor="app-resume" className={LABEL_CLASSES}>
-            Resume Version
-          </label>
-          <input
-            id="app-resume"
-            name="resumeVersion"
-            defaultValue={initial?.resumeVersion ?? ""}
-            placeholder="e.g. v2-backend"
-            className={INPUT_CLASSES}
+        <div className="sm:col-span-2">
+          <ResumeUpload
+            initialUrl={initial?.resumeUrl}
+            initialFilename={initial?.resumeFilename}
           />
         </div>
 

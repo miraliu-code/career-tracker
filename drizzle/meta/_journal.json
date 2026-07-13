@@ -50,6 +50,20 @@
       "when": 1783980025881,
       "tag": "0006_naive_the_phantom",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1783981498231,
+      "tag": "0007_unknown_kulan_gath",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1783981507079,
+      "tag": "0008_magenta_unicorn",
+      "breakpoints": true
     }
   ]
 }

@@ -31,7 +31,8 @@ export const applications = pgTable("applications", {
   status: text("status", {
     enum: ["not_started", "applied", "interviewing", "offer", "rejected"],
   }).default("not_started"),
-  resumeVersion: text("resume_version"),
+  resumeUrl: text("resume_url"),
+  resumeFilename: text("resume_filename"),
   notes: text("notes"),
   // Interview prep notes (collapsible "Prep" section in the form).
   whyInterested: text("why_interested"),

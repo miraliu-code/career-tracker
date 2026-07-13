@@ -22,6 +22,9 @@ import {
 } from "@/components/icons";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
+import { getGmailHealth } from "@/lib/system-status";
+
+import { GmailHealthBanner } from "./gmail-health-banner";
 import { InboxSignals } from "./inbox-signals";
 
 export const dynamic = "force-dynamic";
@@ -100,19 +103,26 @@ function DaysRemaining({ days }: { days: number }) {
 export default async function DashboardPage() {
   const deadlinesSeed = randomMascotSeed();
   const followupSeed = randomMascotSeed();
-  const [allApplications, allFunding, allContacts, allCompanies, newSignals] =
-    await Promise.all([
-      db.query.applications.findMany(),
-      db.query.fundingPrograms.findMany(),
-      db.query.contacts.findMany(),
-      db.query.companies.findMany(),
-      db
-        .select()
-        .from(alertFindings)
-        .where(eq(alertFindings.status, "new"))
-        .orderBy(desc(alertFindings.receivedAt))
-        .limit(10),
-    ]);
+  const [
+    allApplications,
+    allFunding,
+    allContacts,
+    allCompanies,
+    newSignals,
+    gmailHealth,
+  ] = await Promise.all([
+    db.query.applications.findMany(),
+    db.query.fundingPrograms.findMany(),
+    db.query.contacts.findMany(),
+    db.query.companies.findMany(),
+    db
+      .select()
+      .from(alertFindings)
+      .where(eq(alertFindings.status, "new"))
+      .orderBy(desc(alertFindings.receivedAt))
+      .limit(10),
+    getGmailHealth(),
+  ]);
 
   const companyById = new Map(allCompanies.map((c) => [c.id, c]));
 
@@ -179,6 +189,8 @@ export default async function DashboardPage() {
             place.
           </p>
         </header>
+
+        <GmailHealthBanner {...gmailHealth} />
 
         <InboxSignals findings={newSignals} />
 

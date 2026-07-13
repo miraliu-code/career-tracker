@@ -97,6 +97,14 @@ export const alertFindings = pgTable("alert_findings", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Simple key-value store for app-level state (e.g. Gmail connection health).
+export const systemStatus = pgTable("system_status", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: text("value"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
 export type Application = typeof applications.$inferSelect;
@@ -109,3 +117,4 @@ export type Event = typeof events.$inferSelect;
 export type NewEvent = typeof events.$inferInsert;
 export type AlertFinding = typeof alertFindings.$inferSelect;
 export type NewAlertFinding = typeof alertFindings.$inferInsert;
+export type SystemStatus = typeof systemStatus.$inferSelect;

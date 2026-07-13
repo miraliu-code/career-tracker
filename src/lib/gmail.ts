@@ -10,6 +10,18 @@ type GmailMessageMeta = {
 
 let cachedToken: { value: string; expiresAt: number } | null = null;
 
+/**
+ * Thrown when Gmail rejects our credentials — an expired/revoked refresh
+ * token or a 401/403 from the API. Distinct from transient/other errors so
+ * callers can surface "reconnect Gmail" instead of a generic failure.
+ */
+export class GmailAuthError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "GmailAuthError";
+  }
+}
+
 async function proxiedFetch(
   url: string,
   init: RequestInit = {},
@@ -49,7 +61,15 @@ async function getAccessToken(): Promise<string> {
     }),
   });
   if (!res.ok) {
-    throw new Error(`Gmail token refresh failed (${res.status})`);
+    // A bad/expired/revoked refresh token comes back as 400 invalid_grant (or
+    // 401/403). Treat all of these as an auth failure needing reconnection.
+    const detail = await res.text().catch(() => "");
+    const isAuth =
+      res.status === 400 || res.status === 401 || res.status === 403;
+    const message = `Gmail token refresh failed (${res.status})${
+      /invalid_grant/.test(detail) ? ": invalid_grant" : ""
+    }`;
+    throw isAuth ? new GmailAuthError(message) : new Error(message);
   }
   const data = (await res.json()) as {
     access_token: string;
@@ -69,7 +89,11 @@ async function gmailGet<T>(path: string): Promise<T> {
     { headers: { authorization: `Bearer ${token}` } },
   );
   if (!res.ok) {
-    throw new Error(`Gmail API ${path} failed (${res.status})`);
+    const message = `Gmail API ${path} failed (${res.status})`;
+    if (res.status === 401 || res.status === 403) {
+      throw new GmailAuthError(message);
+    }
+    throw new Error(message);
   }
   return (await res.json()) as T;
 }

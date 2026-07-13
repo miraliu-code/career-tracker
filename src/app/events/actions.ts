@@ -5,10 +5,12 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
 import { events } from "@/db/schema";
+import { checkBadges } from "@/lib/badges";
 
 export type EventFormState = {
   error: string | null;
   success?: boolean;
+  newBadges?: string[];
 };
 
 const EVENT_CATEGORIES = [
@@ -57,6 +59,7 @@ function readEventFields(formData: FormData) {
 
 function revalidateEventPages() {
   revalidatePath("/events");
+  revalidatePath("/");
 }
 
 export async function createEvent(
@@ -70,8 +73,9 @@ export async function createEvent(
 
   await db.insert(events).values(fields);
 
+  const newBadges = await checkBadges();
   revalidateEventPages();
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function updateEvent(
@@ -86,8 +90,9 @@ export async function updateEvent(
 
   await db.update(events).set(fields).where(eq(events.id, id));
 
+  const newBadges = await checkBadges();
   revalidateEventPages();
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function deleteEvent(id: number): Promise<void> {
@@ -98,10 +103,12 @@ export async function deleteEvent(id: number): Promise<void> {
 export async function updateEventStatus(
   id: number,
   status: string,
-): Promise<void> {
-  if (!isStatus(status)) return;
+): Promise<string[]> {
+  if (!isStatus(status)) return [];
 
   await db.update(events).set({ status }).where(eq(events.id, id));
 
+  const newBadges = await checkBadges();
   revalidateEventPages();
+  return newBadges;
 }

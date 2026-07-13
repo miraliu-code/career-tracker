@@ -123,12 +123,21 @@ export const alertFindings = pgTable("alert_findings", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Simple key-value store for app-level state (e.g. Gmail connection health).
+// Simple key-value store for app-level state (e.g. Gmail connection health,
+// action counters like "mark contacted today").
 export const systemStatus = pgTable("system_status", {
   id: serial("id").primaryKey(),
   key: text("key").notNull().unique(),
   value: text("value"),
   updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Earned achievement badges. Only earned badges get a row; unearned badges
+// simply have no row here.
+export const badgesEarned = pgTable("badges_earned", {
+  id: serial("id").primaryKey(),
+  badgeKey: text("badge_key").notNull().unique(),
+  earnedAt: timestamp("earned_at").defaultNow(),
 });
 
 export type Company = typeof companies.$inferSelect;
@@ -146,3 +155,4 @@ export type NewEvent = typeof events.$inferInsert;
 export type AlertFinding = typeof alertFindings.$inferSelect;
 export type NewAlertFinding = typeof alertFindings.$inferInsert;
 export type SystemStatus = typeof systemStatus.$inferSelect;
+export type BadgeEarned = typeof badgesEarned.$inferSelect;

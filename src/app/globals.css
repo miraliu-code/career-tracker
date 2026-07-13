@@ -173,6 +173,23 @@ button {
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .badge-toast {
+    animation: badge-toast-in 0.35s ease-out both;
+  }
+}
+
+@keyframes badge-toast-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @keyframes confetti-pop {
   0% {
     transform: translate(-50%, 0) scale(0.4);

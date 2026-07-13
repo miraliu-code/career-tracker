@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect } from "react";
 
+import { announceBadges } from "@/lib/badge-events";
+
 import {
   INPUT_CLASSES,
   LABEL_CLASSES,
@@ -40,7 +42,10 @@ export function FundingForm({
   });
 
   useEffect(() => {
-    if (state.success) onClose?.();
+    if (state.success) {
+      announceBadges(state.newBadges);
+      onClose?.();
+    }
   }, [state, onClose]);
 
   return (

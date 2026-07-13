@@ -17,6 +17,7 @@ const LINKS = [
   { href: "/contacts", label: "Contacts" },
   { href: "/funding", label: "Funding" },
   { href: "/events", label: "Events" },
+  { href: "/badges", label: "Badges" },
 ];
 
 export function Nav() {

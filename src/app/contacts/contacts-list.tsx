@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 
+import { announceBadges } from "@/lib/badge-events";
+
 import {
   CONNECTION_LABELS,
   ConnectionBadge,
@@ -92,7 +94,9 @@ function MarkContactedButton({ id }: { id: number }) {
       disabled={pending}
       onClick={(e) => {
         e.stopPropagation();
-        startTransition(() => markContactedToday(id));
+        startTransition(async () =>
+          announceBadges(await markContactedToday(id)),
+        );
       }}
       className="rounded-full border border-sage/50 bg-white px-2.5 py-1 text-xs font-medium text-sage-deep hover:bg-blush/30 hover:text-forest disabled:opacity-50"
     >

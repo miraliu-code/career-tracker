@@ -6,10 +6,12 @@ import { redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { applications, companies, contacts } from "@/db/schema";
+import { checkBadges } from "@/lib/badges";
 
 export type CompanyFormState = {
   error: string | null;
   success?: boolean;
+  newBadges?: string[];
 };
 
 const DREAM_TIERS = ["A", "B", "C"] as const;
@@ -45,8 +47,10 @@ export async function createCompany(
 
   await db.insert(companies).values(fields);
 
+  const newBadges = await checkBadges();
   revalidatePath("/companies");
-  return { error: null, success: true };
+  revalidatePath("/");
+  return { error: null, success: true, newBadges };
 }
 
 export async function updateCompany(

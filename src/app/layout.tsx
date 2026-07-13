@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito, Quicksand } from "next/font/google";
+import { BadgeToaster } from "@/components/badge-toaster";
 import { Nav } from "@/components/nav";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Nav />
         {children}
+        <BadgeToaster />
       </body>
     </html>
   );

@@ -125,3 +125,84 @@ export function PdfIcon({ className }: { className?: string }) {
     </Icon>
   );
 }
+
+export function TrophyIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M7 4h10v4a5 5 0 0 1-10 0z" />
+      <path d="M7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3" />
+      <path d="M12 13v4M9 21h6M10 17h4" />
+    </Icon>
+  );
+}
+
+export function StarIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" />
+    </Icon>
+  );
+}
+
+export function MedalIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M8 3l2.5 5M16 3l-2.5 5" />
+      <circle cx="12" cy="15" r="6" />
+      <path d="M12 12.5l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L9 14.8l2-.3z" />
+    </Icon>
+  );
+}
+
+export function SparkleIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 3.5c.5 4 2.5 6 6.5 6.5-4 .5-6 2.5-6.5 6.5-.5-4-2.5-6-6.5-6.5 4-.5 6-2.5 6.5-6.5z" />
+      <path d="M18.5 16.5c.2 1.4.9 2.1 2.3 2.3-1.4.2-2.1.9-2.3 2.3-.2-1.4-.9-2.1-2.3-2.3 1.4-.2 2.1-.9 2.3-2.3z" />
+    </Icon>
+  );
+}
+
+export function TargetIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.5" />
+    </Icon>
+  );
+}
+
+export function FlameIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 3c1 3-2 4-2 7a3.5 3.5 0 0 0 7 0c0-1.5-1-2.5-1-2.5 2 4-1 7-4 7a5 5 0 0 1-5-5c0-4 5-6 5-13.5z" />
+    </Icon>
+  );
+}
+
+export function HandshakeIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M8 11l3-3 3 2 4-3 3 3v4l-3 3-3-3" />
+      <path d="M2 8l3-3 4 3M13 17l-2 2-2.5-2M11 19l-1.5 1.5L7 18" />
+    </Icon>
+  );
+}
+
+export function BoltIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M13 3L5 13h5l-1 8 8-10h-5z" />
+    </Icon>
+  );
+}
+
+export function ShieldIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 3l7 2.5v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10v-5z" />
+      <path d="M9 12l2 2 4-4" />
+    </Icon>
+  );
+}

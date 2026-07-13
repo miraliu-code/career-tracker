@@ -24,7 +24,10 @@ import {
 } from "@/components/icons";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
+import { getEarnedBadges } from "@/lib/badges";
+import { BADGE_BY_KEY, BADGE_COUNT, TIER_STYLES } from "@/lib/badges-config";
 import { getGmailHealth } from "@/lib/system-status";
+import { TrophyIcon } from "@/components/icons";
 
 import { GmailHealthBanner } from "./gmail-health-banner";
 import { InboxSignals } from "./inbox-signals";
@@ -142,6 +145,9 @@ export default async function DashboardPage() {
     getGmailHealth(),
   ]);
 
+  const earnedBadges = await getEarnedBadges();
+  const recentBadges = earnedBadges.slice(0, 3);
+
   const companyById = new Map(allCompanies.map((c) => [c.id, c]));
 
   const applicationCounts = countByStatus(allApplications, APPLICATION_STATUSES);
@@ -215,6 +221,57 @@ export default async function DashboardPage() {
         <GmailHealthBanner {...gmailHealth} />
 
         <InboxSignals findings={newSignals} />
+
+        {/* Badges widget */}
+        <Link
+          href="/badges"
+          className="mb-10 flex flex-wrap items-center gap-4 rounded-2xl border border-sage/30 border-l-[3px] border-l-rose bg-white p-5 shadow-soft transition-shadow hover:shadow-md"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose text-cream">
+            <TrophyIcon className="size-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-forest">
+              Badges{" "}
+              <span className="font-normal text-sage">
+                {earnedBadges.length} of {BADGE_COUNT} earned
+              </span>
+            </p>
+            {recentBadges.length > 0 ? (
+              <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-sm text-sage-deep">
+                Recently earned:{" "}
+                {recentBadges.map((b, i) => (
+                  <span key={b.badgeKey}>
+                    <span className="font-medium text-forest">
+                      {BADGE_BY_KEY[b.badgeKey]?.name ?? b.badgeKey}
+                    </span>
+                    {i < recentBadges.length - 1 ? "," : ""}
+                  </span>
+                ))}
+              </p>
+            ) : (
+              <p className="mt-0.5 text-sm text-sage-deep">
+                Start tracking to unlock your first badge.
+              </p>
+            )}
+          </div>
+          <div className="flex shrink-0 items-center gap-1">
+            {recentBadges.map((b) => {
+              const badge = BADGE_BY_KEY[b.badgeKey];
+              if (!badge) return null;
+              const Icon = badge.icon;
+              return (
+                <span
+                  key={b.badgeKey}
+                  title={badge.name}
+                  className={`flex size-8 items-center justify-center rounded-full ${TIER_STYLES[badge.tier].icon}`}
+                >
+                  <Icon className="size-4" />
+                </span>
+              );
+            })}
+          </div>
+        </Link>
 
         {/* Summary metrics */}
         <section aria-label="Summary metrics" className="mb-10">

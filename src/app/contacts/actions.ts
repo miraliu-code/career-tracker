@@ -5,10 +5,12 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
 import { contacts } from "@/db/schema";
+import { checkBadges, incrementCounter } from "@/lib/badges";
 
 export type ContactFormState = {
   error: string | null;
   success?: boolean;
+  newBadges?: string[];
 };
 
 const CONNECTION_TYPES = [
@@ -72,8 +74,9 @@ export async function createContact(
 
   await db.insert(contacts).values(fields);
 
+  const newBadges = await checkBadges();
   revalidateContactPages(fields.companyId);
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function updateContact(
@@ -88,8 +91,9 @@ export async function updateContact(
 
   await db.update(contacts).set(fields).where(eq(contacts.id, id));
 
+  const newBadges = await checkBadges();
   revalidateContactPages(fields.companyId);
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function deleteContact(id: number): Promise<void> {
@@ -101,7 +105,7 @@ export async function deleteContact(id: number): Promise<void> {
   revalidateContactPages(deleted?.companyId ?? null);
 }
 
-export async function markContactedToday(id: number): Promise<void> {
+export async function markContactedToday(id: number): Promise<string[]> {
   const today = new Date().toISOString().slice(0, 10);
 
   const [updated] = await db
@@ -110,5 +114,9 @@ export async function markContactedToday(id: number): Promise<void> {
     .where(eq(contacts.id, id))
     .returning({ companyId: contacts.companyId });
 
+  // Count each "mark contacted" action for the Diligent badge.
+  await incrementCounter();
+  const newBadges = await checkBadges();
   revalidateContactPages(updated?.companyId ?? null);
+  return newBadges;
 }

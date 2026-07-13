@@ -42,10 +42,12 @@ export const contacts = pgTable("contacts", {
   name: text("name").notNull(),
   role: text("role"),
   connectionType: text("connection_type", {
-    enum: ["alum", "recruiter", "mentor", "other"],
+    enum: ["alum", "recruiter", "mentor", "colleague", "peer", "other"],
   }),
   lastContactDate: date("last_contact_date"),
   nextFollowupDate: date("next_followup_date"),
+  primaryContact: text("primary_contact"),
+  secondaryContact: text("secondary_contact"),
   linkedinUrl: text("linkedin_url"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),

@@ -23,6 +23,8 @@ export type ContactFormValues = {
   connectionType: string | null;
   lastContactDate: string | null;
   nextFollowupDate: string | null;
+  primaryContact: string | null;
+  secondaryContact: string | null;
   linkedinUrl: string | null;
   notes: string | null;
 };
@@ -114,6 +116,8 @@ export function ContactForm({
             <option value="alum">Alum</option>
             <option value="recruiter">Recruiter</option>
             <option value="mentor">Mentor</option>
+            <option value="colleague">Colleague</option>
+            <option value="peer">Peer</option>
             <option value="other">Other</option>
           </select>
         </div>
@@ -154,6 +158,32 @@ export function ContactForm({
             name="nextFollowupDate"
             type="date"
             defaultValue={initial?.nextFollowupDate ?? ""}
+            className={INPUT_CLASSES}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="contact-primary" className={LABEL_CLASSES}>
+            Primary Contact
+          </label>
+          <input
+            id="contact-primary"
+            name="primaryContact"
+            defaultValue={initial?.primaryContact ?? ""}
+            placeholder="email or phone number"
+            className={INPUT_CLASSES}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="contact-secondary" className={LABEL_CLASSES}>
+            Secondary Contact
+          </label>
+          <input
+            id="contact-secondary"
+            name="secondaryContact"
+            defaultValue={initial?.secondaryContact ?? ""}
+            placeholder="email or phone number"
             className={INPUT_CLASSES}
           />
         </div>

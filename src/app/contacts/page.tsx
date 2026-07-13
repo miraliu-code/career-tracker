@@ -35,6 +35,8 @@ export default async function ContactsPage() {
     connectionType: row.contact.connectionType,
     lastContactDate: row.contact.lastContactDate,
     nextFollowupDate: row.contact.nextFollowupDate,
+    primaryContact: row.contact.primaryContact,
+    secondaryContact: row.contact.secondaryContact,
     linkedinUrl: row.contact.linkedinUrl,
     notes: row.contact.notes,
     company:

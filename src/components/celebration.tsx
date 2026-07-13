@@ -11,7 +11,7 @@ import { MASCOTS } from "@/components/mascots";
 
 const CONFETTI_COLORS = [
   "var(--color-rose)",
-  "var(--color-calico)",
+  "var(--color-caramel)",
   "var(--color-honey-mist)",
   "var(--color-moss-mist)",
   "var(--color-blush)",

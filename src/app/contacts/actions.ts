@@ -11,7 +11,14 @@ export type ContactFormState = {
   success?: boolean;
 };
 
-const CONNECTION_TYPES = ["alum", "recruiter", "mentor", "other"] as const;
+const CONNECTION_TYPES = [
+  "alum",
+  "recruiter",
+  "mentor",
+  "colleague",
+  "peer",
+  "other",
+] as const;
 type ConnectionType = (typeof CONNECTION_TYPES)[number];
 
 function readContactFields(formData: FormData) {
@@ -41,6 +48,8 @@ function readContactFields(formData: FormData) {
         : null,
     lastContactDate: optionalDate("lastContactDate"),
     nextFollowupDate: optionalDate("nextFollowupDate"),
+    primaryContact: optional("primaryContact"),
+    secondaryContact: optional("secondaryContact"),
     linkedinUrl: optional("linkedinUrl"),
     notes: optional("notes"),
   };

@@ -23,15 +23,31 @@ const GENERIC = new Set([
   "strategies", "strategy", "break", "green", "third", "atlantic", "urban",
 ]);
 
-// Google Alerts digest boilerplate: strip so the tracked "Google" company
-// only matches genuine mentions, not the alert wrapper itself.
-function stripAlertBoilerplate(s: string): string {
-  return s
+// Job-alert digest boilerplate: strip the wrapper chrome so a platform's own
+// brand name (Google/LinkedIn/Indeed) doesn't self-match the tracked company
+// of the same name on every digest. Only genuine mentions should survive.
+function stripAlertBoilerplate(s: string, sender = ""): string {
+  const from = sender.toLowerCase();
+  let out = s
     .replace(/https?:\/\/\S+/gi, " ")
+    // Google Alerts
     .replace(/\bgoogle alerts?\b( ?[-–—] ?)?/gi, " ")
     .replace(/\bgoogle\b(?=[^.]{0,80}\b(daily|weekly|as-it-happens) update\b)/gi, " ")
     .replace(/\b(daily|weekly|as-it-happens) update\b/gi, " ")
-    .replace(/\bsee more results\b|\bedit this alert\b|\bunsubscribe\b|\bflag as irrelevant\b|\breceive this email because\b/gi, " ");
+    // LinkedIn / Indeed job-alert wrapper phrases
+    .replace(/\b(linkedin|indeed) job alerts?\b/gi, " ")
+    .replace(/\byour job alert\b|\bjob alert\b|\b\d+ new jobs?\b/gi, " ")
+    .replace(/\b(view|see) (all )?jobs?\b|\bapply (now )?on (linkedin|indeed)\b/gi, " ")
+    .replace(/\bposted \d+ (day|week|hour|minute)s? ago\b/gi, " ")
+    .replace(/\blinkedin (corporation|corp|premium|learning|news|app)\b/gi, " ")
+    .replace(/\bget the (new )?(linkedin|indeed) app\b/gi, " ")
+    .replace(/\bsee more results\b|\bedit this alert\b|\bunsubscribe\b|\bflag as irrelevant\b|\breceive this email because\b|\bthis email was (intended|sent)\b/gi, " ");
+  // When the digest itself comes from LinkedIn/Indeed, the brand name in it is
+  // wrapper chrome (header/footer/logo), not a company mention — strip
+  // standalone occurrences so it can't self-match the tracked company.
+  if (/linkedin\.com/.test(from)) out = out.replace(/\blinked ?in\b/gi, " ");
+  if (/indeed\.com/.test(from)) out = out.replace(/\bindeed\b/gi, " ");
+  return out;
 }
 
 function norm(s: string): string {
@@ -103,6 +119,7 @@ export async function runCareerAlertScan(days = 8): Promise<ScanResult> {
     const msg = await getCareerAlertMessage(id);
     const text = stripAlertBoilerplate(
       `${msg.subject} ${msg.bodyText || msg.snippet}`,
+      msg.sender,
     );
     const textNorm = norm(text);
 

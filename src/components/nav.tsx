@@ -4,9 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import {
-  BabyCatMascot,
   BiscuitMascot,
-  PantherMascot,
   SkunkMascot,
   StripesMascot,
 } from "@/components/mascots";
@@ -27,12 +25,10 @@ export function Nav() {
     <header className="border-b border-sage/30 bg-white">
       <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-1 px-4 py-3 sm:px-6">
         <span className="mr-3 flex items-center gap-1.5">
-          <span aria-hidden className="flex items-end -space-x-0.5">
-            <SkunkMascot className="size-6" />
-            <StripesMascot className="size-6" />
-            <BiscuitMascot className="size-6" />
-            <BabyCatMascot className="size-6" />
-            <PantherMascot className="size-6" />
+          <span aria-hidden className="flex items-end gap-0.5">
+            <SkunkMascot className="size-7" />
+            <StripesMascot className="size-7" />
+            <BiscuitMascot className="size-7" />
           </span>
           <span className="text-sm font-semibold tracking-tight text-forest">
             Career Tracker

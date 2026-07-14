@@ -31,6 +31,7 @@ export function AddApplication({ companies }: { companies: CompanyOption[] }) {
         action={createApplication}
         companies={companies}
         submitLabel="Create Application"
+        confirmEntity="application"
         onClose={() => setOpen(false)}
       />
     </div>

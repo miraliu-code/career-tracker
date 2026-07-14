@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 
 import { announceBadges } from "@/lib/badge-events";
+import { companionReact } from "@/lib/companion-events";
 
 import {
   STATUS_LABELS,
@@ -100,6 +101,9 @@ function QuickStatus({ id, status }: { id: number; status: string }) {
         e.stopPropagation();
         const next = e.target.value;
         setValue(next);
+        if (next === "accepted" || next === "attending") {
+          companionReact({ kind: "celebrate" });
+        }
         startTransition(async () =>
           announceBadges(await updateEventStatus(id, next)),
         );

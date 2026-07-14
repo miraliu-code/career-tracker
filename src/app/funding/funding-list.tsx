@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 
 import { announceBadges } from "@/lib/badge-events";
+import { companionReact } from "@/lib/companion-events";
 
 import {
   STATUS_LABELS,
@@ -113,7 +114,12 @@ function QuickStatus({
         e.stopPropagation();
         const next = e.target.value;
         setValue(next);
-        if (next === "awarded") onCelebrate?.();
+        if (next === "awarded") {
+          onCelebrate?.();
+          companionReact({ kind: "celebrate" });
+        } else if (next === "rejected") {
+          companionReact({ kind: "sympathy" });
+        }
         startTransition(async () =>
           announceBadges(await updateFundingStatus(id, next)),
         );

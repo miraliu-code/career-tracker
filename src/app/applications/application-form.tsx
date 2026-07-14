@@ -3,7 +3,9 @@
 import { useActionState, useEffect, useState } from "react";
 
 import { announceBadges } from "@/lib/badge-events";
+import { companionReact } from "@/lib/companion-events";
 
+import { MascotSpinner } from "@/components/mascot-spinner";
 import {
   INPUT_CLASSES,
   LABEL_CLASSES,
@@ -40,6 +42,7 @@ export function ApplicationForm({
   companies,
   submitLabel,
   onClose,
+  confirmEntity,
 }: {
   action: (
     prevState: ApplicationFormState,
@@ -49,6 +52,7 @@ export function ApplicationForm({
   companies: CompanyOption[];
   submitLabel: string;
   onClose?: () => void;
+  confirmEntity?: "application";
 }) {
   const [state, formAction, pending] = useActionState(action, {
     error: null,
@@ -61,9 +65,10 @@ export function ApplicationForm({
   useEffect(() => {
     if (state.success) {
       announceBadges(state.newBadges);
+      if (confirmEntity) companionReact({ kind: "confirm", entity: confirmEntity });
       onClose?.();
     }
-  }, [state, onClose]);
+  }, [state, onClose, confirmEntity]);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -250,7 +255,13 @@ export function ApplicationForm({
           disabled={pending}
           className={PRIMARY_BUTTON_CLASSES}
         >
-          {pending ? "Saving…" : submitLabel}
+          {pending ? (
+            <span className="inline-flex items-center gap-1.5">
+              <MascotSpinner /> Saving…
+            </span>
+          ) : (
+            submitLabel
+          )}
         </button>
         {onClose && (
           <button

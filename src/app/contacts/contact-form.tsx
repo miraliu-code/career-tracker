@@ -3,6 +3,8 @@
 import { useActionState, useEffect } from "react";
 
 import { announceBadges } from "@/lib/badge-events";
+import { companionReact } from "@/lib/companion-events";
+import { MascotSpinner } from "@/components/mascot-spinner";
 
 import {
   INPUT_CLASSES,
@@ -37,6 +39,7 @@ export function ContactForm({
   companies,
   submitLabel,
   onClose,
+  confirmEntity,
 }: {
   action: (
     prevState: ContactFormState,
@@ -46,6 +49,7 @@ export function ContactForm({
   companies: CompanyOption[];
   submitLabel: string;
   onClose?: () => void;
+  confirmEntity?: "contact";
 }) {
   const [state, formAction, pending] = useActionState(action, {
     error: null,
@@ -54,9 +58,10 @@ export function ContactForm({
   useEffect(() => {
     if (state.success) {
       announceBadges(state.newBadges);
+      if (confirmEntity) companionReact({ kind: "confirm", entity: confirmEntity });
       onClose?.();
     }
-  }, [state, onClose]);
+  }, [state, onClose, confirmEntity]);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -218,7 +223,13 @@ export function ContactForm({
           disabled={pending}
           className={PRIMARY_BUTTON_CLASSES}
         >
-          {pending ? "Saving…" : submitLabel}
+          {pending ? (
+            <span className="inline-flex items-center gap-1.5">
+              <MascotSpinner /> Saving…
+            </span>
+          ) : (
+            submitLabel
+          )}
         </button>
         {onClose && (
           <button

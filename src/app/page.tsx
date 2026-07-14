@@ -11,6 +11,7 @@ import {
   urgencyStyle,
 } from "@/components/badges";
 import {
+  MASCOTS,
   RandomMascot,
   mascotName,
   randomMascotSeed,
@@ -26,6 +27,7 @@ import { daysFromToday, formatDate } from "@/lib/dates";
 
 import { getEarnedBadges } from "@/lib/badges";
 import { BADGE_BY_KEY, BADGE_COUNT, TIER_STYLES } from "@/lib/badges-config";
+import { companionLine, type MascotName } from "@/lib/mascot-voice";
 import { getGmailHealth } from "@/lib/system-status";
 import { TrophyIcon } from "@/components/icons";
 
@@ -204,6 +206,15 @@ export default async function DashboardPage() {
     )
     .sort((a, b) => a.nextFollowupDate.localeCompare(b.nextFollowupDate));
 
+  // Mascot greeting summarizing the most pressing current state.
+  const nearest = upcomingDeadlines[0] ?? null;
+  const greetingMascot = MASCOTS[randomMascotSeed()].name as MascotName;
+  const greeting = companionLine(greetingMascot, {
+    nearestName: nearest?.title ?? null,
+    nearestDays: nearest?.daysRemaining ?? null,
+    overdueFollowups: needsFollowup.length,
+  });
+
   return (
     <div className="flex-1">
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
@@ -215,6 +226,10 @@ export default async function DashboardPage() {
           <p className="mt-1 text-sm text-sage-deep">
             Your applications, funding, and follow-ups — all growing in one
             place.
+          </p>
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-blush/40 px-3.5 py-1.5 text-sm text-forest">
+            <span className="font-semibold text-rose">{greetingMascot}:</span>
+            {greeting}
           </p>
         </header>
 

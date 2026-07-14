@@ -30,6 +30,7 @@ export function AddFunding() {
       <FundingForm
         action={createFundingProgram}
         submitLabel="Create Funding Program"
+        confirmEntity="funding program"
         onClose={() => setOpen(false)}
       />
     </div>

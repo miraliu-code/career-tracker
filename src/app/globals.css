@@ -76,6 +76,22 @@ button {
   .celebration-mascot {
     animation: mascot-celebrate 1.5s ease-in-out forwards;
   }
+  /* Corner-companion poses (loop back to rest, never fade out). */
+  .companion-alert {
+    animation: companion-alert 1.6s ease-in-out infinite;
+  }
+  .companion-bounce {
+    animation: companion-bounce 0.7s ease-in-out 3;
+  }
+  .companion-nod {
+    animation: companion-nod 0.5s ease-in-out 2;
+  }
+  .companion-sympathy {
+    animation: companion-sympathy 1.4s ease-in-out both;
+  }
+  .mascot-spin {
+    animation: companion-bounce 0.6s ease-in-out infinite;
+  }
   .confetti-dot {
     animation: confetti-pop 1.3s ease-out forwards;
     animation-delay: var(--confetti-delay, 0s);
@@ -176,6 +192,54 @@ button {
 @media (prefers-reduced-motion: no-preference) {
   .badge-toast {
     animation: badge-toast-in 0.35s ease-out both;
+  }
+}
+
+@keyframes companion-alert {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(3deg);
+  }
+}
+
+@keyframes companion-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-10px) scale(1.05);
+  }
+  70% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes companion-nod {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+@keyframes companion-sympathy {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.96);
+    opacity: 0.75;
   }
 }
 

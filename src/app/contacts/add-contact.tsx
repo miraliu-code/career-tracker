@@ -31,6 +31,7 @@ export function AddContact({ companies }: { companies: CompanyOption[] }) {
         action={createContact}
         companies={companies}
         submitLabel="Create Contact"
+        confirmEntity="contact"
         onClose={() => setOpen(false)}
       />
     </div>

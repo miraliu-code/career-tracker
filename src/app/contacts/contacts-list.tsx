@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 
 import { announceBadges } from "@/lib/badge-events";
+import { companionReact } from "@/lib/companion-events";
 
 import {
   CONNECTION_LABELS,
@@ -94,6 +95,7 @@ function MarkContactedButton({ id }: { id: number }) {
       disabled={pending}
       onClick={(e) => {
         e.stopPropagation();
+        companionReact({ kind: "nod" });
         startTransition(async () =>
           announceBadges(await markContactedToday(id)),
         );

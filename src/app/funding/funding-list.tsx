@@ -2,6 +2,8 @@
 
 import { useMemo, useState, useTransition } from "react";
 
+import { announceBadges } from "@/lib/badge-events";
+
 import {
   STATUS_LABELS,
   STATUS_STYLES,
@@ -112,7 +114,9 @@ function QuickStatus({
         const next = e.target.value;
         setValue(next);
         if (next === "awarded") onCelebrate?.();
-        startTransition(() => updateFundingStatus(id, next));
+        startTransition(async () =>
+          announceBadges(await updateFundingStatus(id, next)),
+        );
       }}
       className={`cursor-pointer rounded-full border-0 py-0.5 pl-2.5 pr-7 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-rose/40 disabled:opacity-60 ${STATUS_STYLES[value] ?? STATUS_STYLES.not_started}`}
     >

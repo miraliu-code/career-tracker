@@ -5,10 +5,12 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
 import { interviews } from "@/db/schema";
+import { checkBadges } from "@/lib/badges";
 
 export type InterviewFormState = {
   error: string | null;
   success?: boolean;
+  newBadges?: string[];
 };
 
 const FORMATS = [
@@ -56,9 +58,10 @@ export async function createInterview(
 ): Promise<InterviewFormState> {
   const fields = readInterviewFields(formData);
   await db.insert(interviews).values({ applicationId, ...fields });
+  const newBadges = await checkBadges();
   revalidatePath("/applications");
   revalidatePath("/");
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function updateInterview(
@@ -68,9 +71,10 @@ export async function updateInterview(
 ): Promise<InterviewFormState> {
   const fields = readInterviewFields(formData);
   await db.update(interviews).set(fields).where(eq(interviews.id, id));
+  const newBadges = await checkBadges();
   revalidatePath("/applications");
   revalidatePath("/");
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function deleteInterview(id: number): Promise<void> {

@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect, useState, useTransition } from "react";
 
+import { announceBadges } from "@/lib/badge-events";
+
 import { INPUT_CLASSES, LABEL_CLASSES } from "@/components/form";
 import { formatDate } from "@/lib/dates";
 
@@ -63,7 +65,10 @@ function InterviewForm({
   const [state, formAction, pending] = useActionState(action, { error: null });
 
   useEffect(() => {
-    if (state.success) onClose();
+    if (state.success) {
+      announceBadges(state.newBadges);
+      onClose();
+    }
   }, [state, onClose]);
 
   return (

@@ -5,10 +5,12 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
 import { fundingPrograms } from "@/db/schema";
+import { checkBadges } from "@/lib/badges";
 
 export type FundingFormState = {
   error: string | null;
   success?: boolean;
+  newBadges?: string[];
 };
 
 const FUNDING_TYPES = ["scholarship", "fellowship"] as const;
@@ -77,8 +79,9 @@ export async function createFundingProgram(
 
   await db.insert(fundingPrograms).values(fields);
 
+  const newBadges = await checkBadges();
   revalidateFundingPages();
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function updateFundingProgram(
@@ -96,8 +99,9 @@ export async function updateFundingProgram(
     .set(fields)
     .where(eq(fundingPrograms.id, id));
 
+  const newBadges = await checkBadges();
   revalidateFundingPages();
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function deleteFundingProgram(id: number): Promise<void> {
@@ -108,13 +112,15 @@ export async function deleteFundingProgram(id: number): Promise<void> {
 export async function updateFundingStatus(
   id: number,
   status: string,
-): Promise<void> {
-  if (!isStatus(status)) return;
+): Promise<string[]> {
+  if (!isStatus(status)) return [];
 
   await db
     .update(fundingPrograms)
     .set({ status })
     .where(eq(fundingPrograms.id, id));
 
+  const newBadges = await checkBadges();
   revalidateFundingPages();
+  return newBadges;
 }

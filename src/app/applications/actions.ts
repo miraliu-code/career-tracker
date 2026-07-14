@@ -5,11 +5,13 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
 import { applications } from "@/db/schema";
+import { checkBadges } from "@/lib/badges";
 import { deleteResume } from "@/lib/resume-storage";
 
 export type ApplicationFormState = {
   error: string | null;
   success?: boolean;
+  newBadges?: string[];
 };
 
 const APPLICATION_TYPES = ["internship", "new_grad"] as const;
@@ -81,8 +83,9 @@ export async function createApplication(
 
   await db.insert(applications).values(fields);
 
+  const newBadges = await checkBadges();
   revalidateApplicationPages(fields.companyId);
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function updateApplication(
@@ -107,8 +110,9 @@ export async function updateApplication(
     await deleteResume(existing.resumeUrl);
   }
 
+  const newBadges = await checkBadges();
   revalidateApplicationPages(fields.companyId);
-  return { error: null, success: true };
+  return { error: null, success: true, newBadges };
 }
 
 export async function deleteApplication(id: number): Promise<void> {
@@ -129,8 +133,8 @@ export async function deleteApplication(id: number): Promise<void> {
 export async function updateApplicationStatus(
   id: number,
   status: string,
-): Promise<void> {
-  if (!isStatus(status)) return;
+): Promise<string[]> {
+  if (!isStatus(status)) return [];
 
   const [updated] = await db
     .update(applications)
@@ -138,5 +142,7 @@ export async function updateApplicationStatus(
     .where(eq(applications.id, id))
     .returning({ companyId: applications.companyId });
 
+  const newBadges = await checkBadges();
   revalidateApplicationPages(updated?.companyId ?? null);
+  return newBadges;
 }

@@ -15,6 +15,12 @@ import {
 
 import type { ApplicationFormState } from "./actions";
 import { ResumeUpload } from "./resume-upload";
+import {
+  ApplicationNotesSection,
+  RequirementsProvider,
+  RequiresControl,
+} from "./application-requirements";
+import type { RequirementRow } from "@/lib/requirements";
 
 export type CompanyOption = {
   id: number;
@@ -43,6 +49,7 @@ export function ApplicationForm({
   submitLabel,
   onClose,
   confirmEntity,
+  requirements,
 }: {
   action: (
     prevState: ApplicationFormState,
@@ -53,6 +60,7 @@ export function ApplicationForm({
   submitLabel: string;
   onClose?: () => void;
   confirmEntity?: "application";
+  requirements?: RequirementRow[];
 }) {
   const [state, formAction, pending] = useActionState(action, {
     error: null,
@@ -72,6 +80,7 @@ export function ApplicationForm({
 
   return (
     <form action={formAction} className="space-y-4">
+      <RequirementsProvider initial={requirements ?? []}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="app-role" className={LABEL_CLASSES}>
@@ -166,6 +175,8 @@ export function ApplicationForm({
           </select>
         </div>
 
+        <RequiresControl />
+
         <div className="sm:col-span-2">
           <ResumeUpload
             initialUrl={initial?.resumeUrl}
@@ -187,6 +198,8 @@ export function ApplicationForm({
           />
         </div>
       </div>
+
+      <ApplicationNotesSection />
 
       {/* Collapsible prep section. Fields stay mounted (just hidden) so
           collapsing never drops their values on submit. */}
@@ -273,6 +286,7 @@ export function ApplicationForm({
           </button>
         )}
       </div>
+      </RequirementsProvider>
     </form>
   );
 }

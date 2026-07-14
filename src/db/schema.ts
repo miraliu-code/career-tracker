@@ -1,4 +1,5 @@
 import {
+  boolean,
   date,
   integer,
   pgTable,
@@ -62,6 +63,34 @@ export const interviews = pgTable("interviews", {
   questionsAsked: text("questions_asked"),
   howItWent: text("how_it_went"),
   lessonsLearned: text("lessons_learned"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Per-application requirements (recommendations, exams, essays, etc.). Rows
+// are kept even when a requirement is unchecked in the form (marked inactive)
+// so re-checking restores the data.
+export const applicationRequirements = pgTable("application_requirements", {
+  id: serial("id").primaryKey(),
+  applicationId: integer("application_id")
+    .notNull()
+    .references(() => applications.id, { onDelete: "cascade" }),
+  requirementType: text("requirement_type", {
+    enum: [
+      "recommendation",
+      "pymetrics_exam",
+      "screening_test",
+      "case_interview",
+      "essay",
+      "relocation",
+      "visa",
+    ],
+  }).notNull(),
+  slotIndex: integer("slot_index").default(1).notNull(),
+  active: boolean("active").default(true).notNull(),
+  status: text("status"),
+  contactName: text("contact_name"),
+  contactInfo: text("contact_info"),
+  notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -149,6 +178,8 @@ export type Application = typeof applications.$inferSelect;
 export type NewApplication = typeof applications.$inferInsert;
 export type Interview = typeof interviews.$inferSelect;
 export type NewInterview = typeof interviews.$inferInsert;
+export type ApplicationRequirement =
+  typeof applicationRequirements.$inferSelect;
 export type Contact = typeof contacts.$inferSelect;
 export type NewContact = typeof contacts.$inferInsert;
 export type FundingProgram = typeof fundingPrograms.$inferSelect;

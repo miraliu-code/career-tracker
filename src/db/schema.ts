@@ -33,6 +33,9 @@ export const applications = pgTable("applications", {
   }).default("not_started"),
   resumeUrl: text("resume_url"),
   resumeFilename: text("resume_filename"),
+  // Push an estimated-opening reminder out into the future without deleting
+  // it; the dashboard hides it until this date passes.
+  snoozedUntil: date("snoozed_until"),
   notes: text("notes"),
   // Interview prep notes (collapsible "Prep" section in the form).
   whyInterested: text("why_interested"),

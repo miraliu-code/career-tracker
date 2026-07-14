@@ -1,6 +1,6 @@
 "use server";
 
-import { and, gte, isNotNull, lte, sql } from "drizzle-orm";
+import { and, gte, isNotNull, lte, or, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import { applications, contacts, fundingPrograms } from "@/db/schema";
@@ -30,7 +30,15 @@ export async function getCompanionContext(): Promise<CompanionContext> {
       .select({ name: applications.roleTitle, deadline: applications.deadline })
       .from(applications)
       .where(
-        and(isNotNull(applications.deadline), gte(applications.deadline, today)),
+        and(
+          isNotNull(applications.deadline),
+          gte(applications.deadline, today),
+          // Skip reminders snoozed into the future, matching the dashboard.
+          or(
+            sql`${applications.snoozedUntil} is null`,
+            lte(applications.snoozedUntil, today),
+          ),
+        ),
       )
       .orderBy(sql`${applications.deadline} asc`)
       .limit(1),

@@ -163,9 +163,16 @@ export default async function DashboardPage() {
     (c) => c.nextFollowupDate && daysFromToday(c.nextFollowupDate) <= 7,
   ).length;
 
+  // A snooze pushes an estimated-opening reminder out of view until its date.
+  const isSnoozed = (snoozedUntil: string | null) =>
+    snoozedUntil !== null && daysFromToday(snoozedUntil) > 0;
+
   const upcomingDeadlines: DeadlineItem[] = [
     ...allApplications
-      .filter((a): a is Application & { deadline: string } => a.deadline !== null)
+      .filter(
+        (a): a is Application & { deadline: string } =>
+          a.deadline !== null && !isSnoozed(a.snoozedUntil),
+      )
       .map((a) => {
         const company = a.companyId
           ? (companyById.get(a.companyId) ?? null)

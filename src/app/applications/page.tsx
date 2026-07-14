@@ -64,6 +64,7 @@ export default async function ApplicationsPage() {
     whyInterested: row.application.whyInterested,
     myPitch: row.application.myPitch,
     questionsToAsk: row.application.questionsToAsk,
+    snoozedUntil: row.application.snoozedUntil,
     interviews: interviewsByApp.get(row.application.id) ?? [],
     company:
       row.companyId !== null && row.companyName !== null

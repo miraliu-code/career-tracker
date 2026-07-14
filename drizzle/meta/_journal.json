@@ -71,6 +71,13 @@
       "when": 1783984415912,
       "tag": "0009_big_iron_lad",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1783996240940,
+      "tag": "0010_hard_ego",
+      "breakpoints": true
     }
   ]
 }

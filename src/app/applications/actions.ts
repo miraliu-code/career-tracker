@@ -146,3 +146,45 @@ export async function updateApplicationStatus(
   revalidateApplicationPages(updated?.companyId ?? null);
   return newBadges;
 }
+
+const SNOOZE_PRESETS = {
+  "1w": { days: 7 },
+  "2w": { days: 14 },
+  "1mo": { months: 1 },
+  "3mo": { months: 3 },
+} as const;
+
+export type SnoozePreset = keyof typeof SNOOZE_PRESETS;
+
+/** Push an application's reminder out by a preset amount from today. */
+export async function snoozeApplication(
+  id: number,
+  preset: SnoozePreset,
+): Promise<void> {
+  const spec = SNOOZE_PRESETS[preset];
+  if (!spec) return;
+
+  const d = new Date();
+  if ("days" in spec) d.setUTCDate(d.getUTCDate() + spec.days);
+  else d.setUTCMonth(d.getUTCMonth() + spec.months);
+  const snoozedUntil = d.toISOString().slice(0, 10);
+
+  const [updated] = await db
+    .update(applications)
+    .set({ snoozedUntil })
+    .where(eq(applications.id, id))
+    .returning({ companyId: applications.companyId });
+
+  revalidateApplicationPages(updated?.companyId ?? null);
+}
+
+/** Clear a snooze so the reminder returns to the dashboard. */
+export async function unsnoozeApplication(id: number): Promise<void> {
+  const [updated] = await db
+    .update(applications)
+    .set({ snoozedUntil: null })
+    .where(eq(applications.id, id))
+    .returning({ companyId: applications.companyId });
+
+  revalidateApplicationPages(updated?.companyId ?? null);
+}

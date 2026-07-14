@@ -33,8 +33,12 @@ export async function uploadResume(
     const bytes = Buffer.from(await file.arrayBuffer());
     const stored = await putResume(file.name, bytes);
     return { ok: true, url: stored.url, filename: stored.filename };
-  } catch {
-    return { ok: false, error: "Upload failed — please try again." };
+  } catch (err) {
+    // Surface the real reason: it lands in the Vercel function logs and is
+    // returned to the client so the actual failure is visible, not masked.
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[resume upload] failed:", err);
+    return { ok: false, error: `Upload failed: ${message}` };
   }
 }
 

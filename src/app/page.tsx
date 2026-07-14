@@ -2,8 +2,13 @@ import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 
 import { db } from "@/db";
-import { alertFindings, interviews } from "@/db/schema";
+import {
+  alertFindings,
+  applicationRequirements,
+  interviews,
+} from "@/db/schema";
 import type { Application, Contact, FundingProgram } from "@/db/schema";
+import { isRequirementDone } from "@/lib/requirements";
 import {
   CompanyLabel,
   STATUS_LABELS,
@@ -85,6 +90,7 @@ type DeadlineItem = {
   kind: "application" | "funding";
   deadline: string;
   daysRemaining: number;
+  requirementsNote: string | null;
 };
 
 function StatusBreakdown({
@@ -130,6 +136,7 @@ export default async function DashboardPage() {
     allContacts,
     allCompanies,
     allInterviews,
+    allRequirements,
     newSignals,
     gmailHealth,
   ] = await Promise.all([
@@ -138,6 +145,7 @@ export default async function DashboardPage() {
     db.query.contacts.findMany(),
     db.query.companies.findMany(),
     db.select({ outcome: interviews.outcome }).from(interviews),
+    db.select().from(applicationRequirements),
     db
       .select()
       .from(alertFindings)
@@ -151,6 +159,33 @@ export default async function DashboardPage() {
   const recentBadges = earnedBadges.slice(0, 3);
 
   const companyById = new Map(allCompanies.map((c) => [c.id, c]));
+
+  // Per-application note about incomplete requirements, surfaced on the
+  // dashboard only for deadlines within the next 14 days.
+  const incompleteByApp = new Map<number, { recs: number; other: number }>();
+  for (const req of allRequirements) {
+    if (!req.active || isRequirementDone(req.status)) continue;
+    const acc = incompleteByApp.get(req.applicationId) ?? { recs: 0, other: 0 };
+    if (req.requirementType === "recommendation") acc.recs += 1;
+    else acc.other += 1;
+    incompleteByApp.set(req.applicationId, acc);
+  }
+  const requirementsNoteFor = (applicationId: number): string | null => {
+    const acc = incompleteByApp.get(applicationId);
+    if (!acc || (acc.recs === 0 && acc.other === 0)) return null;
+    const parts: string[] = [];
+    if (acc.recs > 0) {
+      parts.push(
+        `${acc.recs} recommendation${acc.recs === 1 ? "" : "s"} still not requested`,
+      );
+    }
+    if (acc.other > 0) {
+      parts.push(
+        `${acc.other} other requirement${acc.other === 1 ? "" : "s"} incomplete`,
+      );
+    }
+    return parts.join(" · ");
+  };
 
   const applicationCounts = countByStatus(allApplications, APPLICATION_STATUSES);
   const fundingCounts = countByStatus(allFunding, FUNDING_STATUSES);
@@ -187,6 +222,8 @@ export default async function DashboardPage() {
           kind: "application" as const,
           deadline: a.deadline,
           daysRemaining: daysFromToday(a.deadline),
+          requirementsNote:
+            daysFromToday(a.deadline) <= 14 ? requirementsNoteFor(a.id) : null,
         };
       }),
     ...allFunding
@@ -201,6 +238,7 @@ export default async function DashboardPage() {
         kind: "funding" as const,
         deadline: f.deadline,
         daysRemaining: daysFromToday(f.deadline),
+        requirementsNote: null,
       })),
   ]
     .filter((d) => d.daysRemaining >= 0 && d.daysRemaining <= 30)
@@ -430,6 +468,11 @@ export default async function DashboardPage() {
                         {item.eligibilityTags.join(" · ")}
                       </p>
                     ) : null}
+                    {item.requirementsNote && (
+                      <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-honey-mist px-2.5 py-0.5 text-xs font-medium text-honey">
+                        {item.requirementsNote}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                     <span

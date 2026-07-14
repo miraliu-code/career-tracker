@@ -78,6 +78,13 @@
       "when": 1783996240940,
       "tag": "0010_hard_ego",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1784058551135,
+      "tag": "0011_friendly_the_phantom",
+      "breakpoints": true
     }
   ]
 }

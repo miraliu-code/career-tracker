@@ -16,6 +16,7 @@ import { CelebrationBurst } from "@/components/celebration";
 import { ClockIcon, PdfIcon } from "@/components/icons";
 import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
+import { requirementProgress, type RequirementRow } from "@/lib/requirements";
 
 import {
   deleteApplication,
@@ -40,6 +41,7 @@ export type ApplicationRow = ApplicationFormValues & {
   company: { id: number; name: string; industry: string | null } | null;
   interviews: InterviewRow[];
   snoozedUntil: string | null;
+  requirements: RequirementRow[];
 };
 
 const STATUS_FILTERS = [
@@ -126,6 +128,27 @@ function SnoozeControl({
         </option>
       ))}
     </select>
+  );
+}
+
+function RequirementsChip({
+  requirements,
+}: {
+  requirements: RequirementRow[];
+}) {
+  const { done, total } = requirementProgress(requirements);
+  if (total === 0) return null;
+  const complete = done === total;
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+        complete
+          ? "bg-moss-mist text-moss"
+          : "bg-sage-mist text-sage-deep"
+      }`}
+    >
+      {done}/{total} requirement{total === 1 ? "" : "s"} done
+    </span>
   );
 }
 
@@ -352,6 +375,7 @@ export function ApplicationsList({
                   action={updateApplication.bind(null, app.id)}
                   initial={app}
                   companies={companies}
+                  requirements={app.requirements}
                   submitLabel="Save Changes"
                   onClose={() => setEditingId(null)}
                 />
@@ -422,6 +446,7 @@ export function ApplicationsList({
                       {app.interviews.length === 1 ? "" : "s"}
                     </span>
                   )}
+                  <RequirementsChip requirements={app.requirements} />
                   <QuickStatus
                     key={`${app.id}-${app.status}`}
                     id={app.id}

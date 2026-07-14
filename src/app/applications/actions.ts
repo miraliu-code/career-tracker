@@ -4,9 +4,14 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
-import { applications } from "@/db/schema";
+import { applicationRequirements, applications } from "@/db/schema";
 import { checkBadges } from "@/lib/badges";
 import { deleteResume } from "@/lib/resume-storage";
+import {
+  REQUIREMENT_STATUS,
+  SIMPLE_REQUIREMENT_TYPES,
+  type RequirementType,
+} from "@/lib/requirements";
 
 export type ApplicationFormState = {
   error: string | null;
@@ -65,6 +70,143 @@ function readApplicationFields(formData: FormData) {
   };
 }
 
+const ALL_REQUIREMENT_TYPES: RequirementType[] = [
+  "recommendation",
+  ...SIMPLE_REQUIREMENT_TYPES,
+];
+
+type ParsedRequirement = {
+  requirementType: RequirementType;
+  slotIndex: number;
+  status: string | null;
+  contactName: string | null;
+  contactInfo: string | null;
+  notes: string | null;
+};
+
+/**
+ * Parse and validate the hidden "requirements" JSON the form submits. Anything
+ * malformed is dropped rather than throwing, so a bad payload can't break a
+ * save. Contact fields are only kept for recommendations.
+ */
+function readRequirements(formData: FormData): ParsedRequirement[] {
+  const raw = formData.get("requirements");
+  if (typeof raw !== "string" || !raw) return [];
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+
+  const out: ParsedRequirement[] = [];
+  const seen = new Set<string>();
+  for (const item of parsed) {
+    if (!item || typeof item !== "object") continue;
+    const r = item as Record<string, unknown>;
+    const type = r.requirementType;
+    if (
+      typeof type !== "string" ||
+      !ALL_REQUIREMENT_TYPES.includes(type as RequirementType)
+    ) {
+      continue;
+    }
+    const requirementType = type as RequirementType;
+    const slotIndex =
+      Number.isInteger(r.slotIndex) && (r.slotIndex as number) >= 1
+        ? (r.slotIndex as number)
+        : 1;
+
+    const dedupeKey = `${requirementType}:${slotIndex}`;
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+
+    const statusRaw = typeof r.status === "string" ? r.status : "none";
+    const validStatus = REQUIREMENT_STATUS[requirementType].options.some(
+      (o) => o.value === statusRaw,
+    );
+    const status = validStatus && statusRaw !== "none" ? statusRaw : null;
+
+    const str = (v: unknown) =>
+      typeof v === "string" && v.trim() ? v.trim() : null;
+    const hasContact = requirementType === "recommendation";
+
+    out.push({
+      requirementType,
+      slotIndex,
+      status,
+      contactName: hasContact ? str(r.contactName) : null,
+      contactInfo: hasContact ? str(r.contactInfo) : null,
+      notes: str(r.notes),
+    });
+  }
+  return out;
+}
+
+/**
+ * Reconcile an application's requirement rows against the submitted set.
+ * Submitted requirements are upserted and marked active; any existing row not
+ * in the submitted set is marked inactive (its data is preserved so
+ * re-checking the requirement restores it).
+ */
+async function reconcileRequirements(
+  applicationId: number,
+  submitted: ParsedRequirement[],
+) {
+  const existing = await db
+    .select()
+    .from(applicationRequirements)
+    .where(eq(applicationRequirements.applicationId, applicationId));
+
+  const existingByKey = new Map(
+    existing.map((row) => [`${row.requirementType}:${row.slotIndex}`, row]),
+  );
+  const submittedKeys = new Set(
+    submitted.map((r) => `${r.requirementType}:${r.slotIndex}`),
+  );
+
+  for (const req of submitted) {
+    const key = `${req.requirementType}:${req.slotIndex}`;
+    const match = existingByKey.get(key);
+    if (match) {
+      await db
+        .update(applicationRequirements)
+        .set({
+          active: true,
+          status: req.status,
+          contactName: req.contactName,
+          contactInfo: req.contactInfo,
+          notes: req.notes,
+        })
+        .where(eq(applicationRequirements.id, match.id));
+    } else {
+      await db.insert(applicationRequirements).values({
+        applicationId,
+        requirementType: req.requirementType,
+        slotIndex: req.slotIndex,
+        active: true,
+        status: req.status,
+        contactName: req.contactName,
+        contactInfo: req.contactInfo,
+        notes: req.notes,
+      });
+    }
+  }
+
+  // Deactivate rows that are no longer selected, keeping their data.
+  for (const row of existing) {
+    const key = `${row.requirementType}:${row.slotIndex}`;
+    if (!submittedKeys.has(key) && row.active) {
+      await db
+        .update(applicationRequirements)
+        .set({ active: false })
+        .where(eq(applicationRequirements.id, row.id));
+    }
+  }
+}
+
 function revalidateApplicationPages(companyId: number | null) {
   revalidatePath("/applications");
   revalidatePath("/");
@@ -81,7 +223,14 @@ export async function createApplication(
     return { error: "Role title is required." };
   }
 
-  await db.insert(applications).values(fields);
+  const [created] = await db
+    .insert(applications)
+    .values(fields)
+    .returning({ id: applications.id });
+
+  if (created) {
+    await reconcileRequirements(created.id, readRequirements(formData));
+  }
 
   const newBadges = await checkBadges();
   revalidateApplicationPages(fields.companyId);
@@ -105,6 +254,8 @@ export async function updateApplication(
     .where(eq(applications.id, id));
 
   await db.update(applications).set(fields).where(eq(applications.id, id));
+
+  await reconcileRequirements(id, readRequirements(formData));
 
   if (existing?.resumeUrl && existing.resumeUrl !== fields.resumeUrl) {
     await deleteResume(existing.resumeUrl);

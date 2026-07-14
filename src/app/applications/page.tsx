@@ -3,7 +3,13 @@ import { asc, eq } from "drizzle-orm";
 import { BriefcaseIcon } from "@/components/icons";
 import { randomMascotSeed } from "@/components/mascots";
 import { db } from "@/db";
-import { applications, companies, interviews } from "@/db/schema";
+import {
+  applicationRequirements,
+  applications,
+  companies,
+  interviews,
+} from "@/db/schema";
+import type { RequirementRow, RequirementType } from "@/lib/requirements";
 
 import { AddApplication } from "./add-application";
 import { ApplicationsList, type ApplicationRow } from "./applications-list";
@@ -11,25 +17,49 @@ import { ApplicationsList, type ApplicationRow } from "./applications-list";
 export const dynamic = "force-dynamic";
 
 export default async function ApplicationsPage() {
-  const [rows, companyOptions, allInterviews] = await Promise.all([
-    db
-      .select({
-        application: applications,
-        companyId: companies.id,
-        companyName: companies.name,
-        companyIndustry: companies.industry,
-      })
-      .from(applications)
-      .leftJoin(companies, eq(applications.companyId, companies.id)),
-    db
-      .select({ id: companies.id, name: companies.name })
-      .from(companies)
-      .orderBy(asc(companies.name)),
-    db
-      .select()
-      .from(interviews)
-      .orderBy(asc(interviews.interviewDate), asc(interviews.id)),
-  ]);
+  const [rows, companyOptions, allInterviews, allRequirements] =
+    await Promise.all([
+      db
+        .select({
+          application: applications,
+          companyId: companies.id,
+          companyName: companies.name,
+          companyIndustry: companies.industry,
+        })
+        .from(applications)
+        .leftJoin(companies, eq(applications.companyId, companies.id)),
+      db
+        .select({ id: companies.id, name: companies.name })
+        .from(companies)
+        .orderBy(asc(companies.name)),
+      db
+        .select()
+        .from(interviews)
+        .orderBy(asc(interviews.interviewDate), asc(interviews.id)),
+      db
+        .select()
+        .from(applicationRequirements)
+        .orderBy(
+          asc(applicationRequirements.requirementType),
+          asc(applicationRequirements.slotIndex),
+        ),
+    ]);
+
+  const requirementsByApp = new Map<number, RequirementRow[]>();
+  for (const req of allRequirements) {
+    const list = requirementsByApp.get(req.applicationId) ?? [];
+    list.push({
+      id: req.id,
+      requirementType: req.requirementType as RequirementType,
+      slotIndex: req.slotIndex,
+      active: req.active,
+      status: req.status,
+      contactName: req.contactName,
+      contactInfo: req.contactInfo,
+      notes: req.notes,
+    });
+    requirementsByApp.set(req.applicationId, list);
+  }
 
   const interviewsByApp = new Map<number, ApplicationRow["interviews"]>();
   for (const iv of allInterviews) {
@@ -66,6 +96,7 @@ export default async function ApplicationsPage() {
     questionsToAsk: row.application.questionsToAsk,
     snoozedUntil: row.application.snoozedUntil,
     interviews: interviewsByApp.get(row.application.id) ?? [],
+    requirements: requirementsByApp.get(row.application.id) ?? [],
     company:
       row.companyId !== null && row.companyName !== null
         ? {

@@ -55,6 +55,7 @@ export function ResumeUpload({
     startTransition(async () => {
       const result = await uploadResume(fd);
       if (!result.ok) {
+        console.error("[resume upload]", result.error);
         setError(result.error);
         return;
       }

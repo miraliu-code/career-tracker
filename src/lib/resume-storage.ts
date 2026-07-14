@@ -1,13 +1,17 @@
 // Resume storage. In production (Vercel) this uses Vercel Blob, keyed off
 // BLOB_READ_WRITE_TOKEN. When that token is absent — local development —
 // it falls back to writing under public/uploads so the flow is fully
-// exercisable without a Blob account. The deployed path always has the
-// token, so the fallback never runs in production.
+// exercisable without a Blob account. On Vercel the fallback can never work
+// (read-only filesystem), so a missing token fails loudly with a clear
+// message instead of a confusing EROFS.
 
-// Real Vercel Blob tokens start with "vercel_blob_rw_". A missing token — or
-// the placeholder in .env.local — routes to the local dev fallback instead.
-const hasBlobToken = () =>
-  (process.env.BLOB_READ_WRITE_TOKEN ?? "").startsWith("vercel_blob_rw_");
+const PLACEHOLDER = "REPLACE_WITH_VERCEL_BLOB_TOKEN";
+
+/** True when a usable Blob token is present (set, non-empty, not the stub). */
+function blobConfigured(): boolean {
+  const t = (process.env.BLOB_READ_WRITE_TOKEN ?? "").trim();
+  return t.length > 0 && t !== PLACEHOLDER;
+}
 
 export type StoredResume = { url: string; filename: string };
 
@@ -22,13 +26,24 @@ export async function putResume(
 ): Promise<StoredResume> {
   const key = `resumes/${safeName(filename)}`;
 
-  if (hasBlobToken()) {
+  if (blobConfigured()) {
     const { put } = await import("@vercel/blob");
     const blob = await put(key, bytes, {
       access: "public",
       contentType: "application/pdf",
     });
     return { url: blob.url, filename };
+  }
+
+  // No Blob token available. On Vercel the local fallback would try to write
+  // to a read-only filesystem and fail with an opaque EROFS — surface an
+  // actionable message instead.
+  if (process.env.VERCEL) {
+    throw new Error(
+      "BLOB_READ_WRITE_TOKEN is not available at runtime. Add it in Vercel → " +
+        "Project → Settings → Environment Variables (Production scope) and " +
+        "redeploy so the running build picks it up.",
+    );
   }
 
   // Local dev fallback: write into public/ and serve as a static file.
@@ -46,7 +61,7 @@ export async function deleteResume(url: string | null): Promise<void> {
 
   // A real Blob URL is absolute; local fallback URLs start with "/uploads".
   if (/^https?:\/\//.test(url)) {
-    if (!hasBlobToken()) return;
+    if (!blobConfigured()) return;
     const { del } = await import("@vercel/blob");
     await del(url).catch(() => {
       // Deleting an already-gone blob shouldn't break the caller.

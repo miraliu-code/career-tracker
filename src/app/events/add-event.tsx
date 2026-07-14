@@ -30,6 +30,7 @@ export function AddEvent() {
       <EventForm
         action={createEvent}
         submitLabel="Create Event"
+        confirmEntity="event"
         onClose={() => setOpen(false)}
       />
     </div>

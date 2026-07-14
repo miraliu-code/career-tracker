@@ -5,6 +5,7 @@ import { useActionState, useEffect, useState, useTransition } from "react";
 import { announceBadges } from "@/lib/badge-events";
 
 import { INPUT_CLASSES, LABEL_CLASSES } from "@/components/form";
+import { MascotSpinner } from "@/components/mascot-spinner";
 import { formatDate } from "@/lib/dates";
 
 import {
@@ -178,7 +179,13 @@ function InterviewForm({
           disabled={pending}
           className="rounded-full bg-rose px-4 py-1.5 text-sm font-medium text-cream hover:bg-rose-deep disabled:opacity-50"
         >
-          {pending ? "Saving…" : submitLabel}
+          {pending ? (
+            <span className="inline-flex items-center gap-1.5">
+              <MascotSpinner /> Saving…
+            </span>
+          ) : (
+            submitLabel
+          )}
         </button>
         <button
           type="button"

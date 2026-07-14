@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 
 import { announceBadges } from "@/lib/badge-events";
+import { companionReact } from "@/lib/companion-events";
 
 import {
   IndustryDot,
@@ -98,7 +99,12 @@ function QuickStatus({
         e.stopPropagation();
         const next = e.target.value;
         setValue(next);
-        if (next === "offer") onCelebrate?.();
+        if (next === "offer") {
+          onCelebrate?.();
+          companionReact({ kind: "celebrate" });
+        } else if (next === "rejected") {
+          companionReact({ kind: "sympathy" });
+        }
         startTransition(async () =>
           announceBadges(await updateApplicationStatus(id, next)),
         );

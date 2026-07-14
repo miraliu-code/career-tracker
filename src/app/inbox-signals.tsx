@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 
+import { MascotSpinner } from "@/components/mascot-spinner";
 import type { AlertFinding } from "@/db/schema";
 import { formatDate } from "@/lib/dates";
 
@@ -47,7 +48,13 @@ function ScanButton() {
         }
         className="rounded-full border border-sage/50 bg-white px-3 py-1 text-xs font-medium text-sage-deep hover:bg-blush/30 hover:text-forest disabled:opacity-50"
       >
-        {pending ? "Scanning…" : "Scan inbox now"}
+        {pending ? (
+          <span className="inline-flex items-center gap-1.5">
+            <MascotSpinner /> Scanning…
+          </span>
+        ) : (
+          "Scan inbox now"
+        )}
       </button>
     </span>
   );

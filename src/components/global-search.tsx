@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 
 import { STATUS_LABELS, STATUS_STYLES } from "@/components/badges";
 import { SearchIcon } from "@/components/icons";
+import { MascotSpinner } from "@/components/mascot-spinner";
 import { globalSearch, type SearchResults } from "@/app/search/actions";
 
 export function GlobalSearch() {
@@ -99,8 +100,8 @@ export function GlobalSearch() {
       {showDropdown && (
         <div className="absolute left-0 right-0 z-30 mt-2 max-h-[70vh] overflow-y-auto rounded-2xl border border-sage/30 bg-white p-2 shadow-soft sm:left-auto sm:right-0 sm:w-96">
           {pending && !results ? (
-            <p className="px-3 py-4 text-center text-sm text-sage-deep">
-              Searching…
+            <p className="flex items-center justify-center gap-2 px-3 py-4 text-center text-sm text-sage-deep">
+              <MascotSpinner /> Searching…
             </p>
           ) : results && results.totalHits === 0 ? (
             <div className="px-3 py-6 text-center">

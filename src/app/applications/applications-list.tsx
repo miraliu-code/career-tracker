@@ -13,14 +13,17 @@ import {
   urgencyStyle,
 } from "@/components/badges";
 import { CelebrationBurst } from "@/components/celebration";
-import { PdfIcon } from "@/components/icons";
+import { ClockIcon, PdfIcon } from "@/components/icons";
 import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 
 import {
   deleteApplication,
+  snoozeApplication,
+  unsnoozeApplication,
   updateApplication,
   updateApplicationStatus,
+  type SnoozePreset,
 } from "./actions";
 import {
   ApplicationForm,
@@ -36,6 +39,7 @@ export type ApplicationRow = ApplicationFormValues & {
   id: number;
   company: { id: number; name: string; industry: string | null } | null;
   interviews: InterviewRow[];
+  snoozedUntil: string | null;
 };
 
 const STATUS_FILTERS = [
@@ -54,6 +58,76 @@ const TYPE_LABELS: Record<string, string> = {
   internship: "Internship",
   new_grad: "New grad",
 };
+
+/** A snooze counts only while its date is still in the future. */
+function isSnoozed(snoozedUntil: string | null): boolean {
+  return snoozedUntil !== null && daysFromToday(snoozedUntil) > 0;
+}
+
+const SNOOZE_OPTIONS: { value: SnoozePreset; label: string }[] = [
+  { value: "1w", label: "1 week" },
+  { value: "2w", label: "2 weeks" },
+  { value: "1mo", label: "1 month" },
+  { value: "3mo", label: "3 months" },
+];
+
+function SnoozeControl({
+  id,
+  snoozedUntil,
+}: {
+  id: number;
+  snoozedUntil: string | null;
+}) {
+  const [pending, startTransition] = useTransition();
+
+  if (isSnoozed(snoozedUntil)) {
+    return (
+      <span
+        className="inline-flex items-center gap-1.5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="inline-flex items-center gap-1 rounded-full bg-sage-mist px-2.5 py-0.5 text-xs font-medium text-sage-deep">
+          <ClockIcon className="size-3.5" />
+          Snoozed until {formatDate(snoozedUntil!)}
+        </span>
+        <button
+          type="button"
+          disabled={pending}
+          onClick={(e) => {
+            e.stopPropagation();
+            startTransition(() => unsnoozeApplication(id));
+          }}
+          className="rounded-full px-2 py-0.5 text-xs font-medium text-rose hover:bg-blush/40 disabled:opacity-50"
+        >
+          Unsnooze
+        </button>
+      </span>
+    );
+  }
+
+  return (
+    <select
+      aria-label="Snooze reminder"
+      value=""
+      disabled={pending}
+      onClick={(e) => e.stopPropagation()}
+      onChange={(e) => {
+        e.stopPropagation();
+        const preset = e.target.value as SnoozePreset;
+        if (!preset) return;
+        startTransition(() => snoozeApplication(id, preset));
+      }}
+      className="cursor-pointer rounded-full border border-sage/50 bg-white py-0.5 pl-2.5 pr-6 text-xs font-medium text-sage-deep hover:bg-blush/30 hover:text-forest focus:outline-none focus:ring-2 focus:ring-rose/40 disabled:opacity-50"
+    >
+      <option value="">Snooze…</option>
+      {SNOOZE_OPTIONS.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  );
+}
 
 function DeadlineCell({ deadline }: { deadline: string }) {
   const days = daysFromToday(deadline);
@@ -131,15 +205,24 @@ export function ApplicationsList({
 }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("deadline");
+  const [showSnoozed, setShowSnoozed] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [celebratingId, setCelebratingId] = useState<number | null>(null);
   const [deletePending, startDeleteTransition] = useTransition();
 
+  const snoozedCount = useMemo(
+    () => applications.filter((a) => isSnoozed(a.snoozedUntil)).length,
+    [applications],
+  );
+
   const visible = useMemo(() => {
-    const filtered =
+    let filtered =
       statusFilter === "all"
         ? applications
         : applications.filter((app) => app.status === statusFilter);
+    if (!showSnoozed) {
+      filtered = filtered.filter((app) => !isSnoozed(app.snoozedUntil));
+    }
 
     return [...filtered].sort((a, b) => {
       if (sortBy === "deadline") {
@@ -157,7 +240,7 @@ export function ApplicationsList({
         nameA.localeCompare(nameB) || a.roleTitle.localeCompare(b.roleTitle)
       );
     });
-  }, [applications, statusFilter, sortBy]);
+  }, [applications, statusFilter, sortBy, showSnoozed]);
 
   const handleDelete = (app: ApplicationRow) => {
     if (
@@ -197,6 +280,27 @@ export function ApplicationsList({
               </button>
             );
           })}
+          {snoozedCount > 0 && (
+            <>
+              <span
+                aria-hidden
+                className="mx-1 hidden h-4 w-px self-center bg-sage/50 sm:block"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSnoozed((v) => !v)}
+                aria-pressed={showSnoozed}
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  showSnoozed
+                    ? "bg-forest text-white"
+                    : "border border-sage/50 bg-white text-sage-deep hover:bg-blush/30"
+                }`}
+              >
+                <ClockIcon className="size-3.5" />
+                {showSnoozed ? "Hide" : "Show"} snoozed ({snoozedCount})
+              </button>
+            </>
+          )}
         </div>
         <label className="flex items-center gap-2 text-sm text-sage-deep">
           Sort by
@@ -324,6 +428,7 @@ export function ApplicationsList({
                     status={app.status}
                     onCelebrate={() => setCelebratingId(app.id)}
                   />
+                  <SnoozeControl id={app.id} snoozedUntil={app.snoozedUntil} />
                   {celebratingId === app.id && (
                     <CelebrationBurst onDone={() => setCelebratingId(null)} />
                   )}

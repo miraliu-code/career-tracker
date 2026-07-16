@@ -17,6 +17,7 @@ import { ClockIcon, PdfIcon } from "@/components/icons";
 import { RandomMascot, mascotName } from "@/components/mascots";
 import { daysFromToday, formatDate } from "@/lib/dates";
 import { requirementProgress, type RequirementRow } from "@/lib/requirements";
+import { resumeHref } from "@/lib/resume-href";
 
 import {
   deleteApplication,
@@ -429,7 +430,7 @@ export function ApplicationsList({
                   {app.deadline && <DeadlineCell deadline={app.deadline} />}
                   {app.resumeUrl && (
                     <a
-                      href={app.resumeUrl}
+                      href={resumeHref(app.resumeUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}

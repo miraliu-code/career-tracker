@@ -6,6 +6,8 @@ import {
   alertFindings,
   applicationRequirements,
   interviews,
+  skillHoursLog,
+  skills,
 } from "@/db/schema";
 import type { Application, Contact, FundingProgram } from "@/db/schema";
 import { isRequirementDone } from "@/lib/requirements";
@@ -22,6 +24,7 @@ import {
   randomMascotSeed,
 } from "@/components/mascots";
 import {
+  BookIcon,
   BriefcaseIcon,
   ChatIcon,
   GradCapIcon,
@@ -137,6 +140,8 @@ export default async function DashboardPage() {
     allCompanies,
     allInterviews,
     allRequirements,
+    allSkills,
+    allSkillLogs,
     newSignals,
     gmailHealth,
   ] = await Promise.all([
@@ -146,6 +151,16 @@ export default async function DashboardPage() {
     db.query.companies.findMany(),
     db.select({ outcome: interviews.outcome }).from(interviews),
     db.select().from(applicationRequirements),
+    db
+      .select({
+        id: skills.id,
+        skillType: skills.skillType,
+        status: skills.status,
+      })
+      .from(skills),
+    db
+      .select({ skillId: skillHoursLog.skillId, hours: skillHoursLog.hours, loggedOn: skillHoursLog.loggedOn })
+      .from(skillHoursLog),
     db
       .select()
       .from(alertFindings)
@@ -159,6 +174,23 @@ export default async function DashboardPage() {
   const recentBadges = earnedBadges.slice(0, 3);
 
   const companyById = new Map(allCompanies.map((c) => [c.id, c]));
+
+  // Learning widget metrics. Hours this month sum only build + habit logs (the
+  // types that accumulate hours); certifications are counted by earned status.
+  const skillTypeById = new Map(allSkills.map((s) => [s.id, s.skillType]));
+  const thisMonthPrefix = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const learningHoursThisMonth = allSkillLogs.reduce((sum, log) => {
+    const type = skillTypeById.get(log.skillId);
+    const inMonth = log.loggedOn?.startsWith(thisMonthPrefix);
+    if (inMonth && (type === "build" || type === "habit")) return sum + log.hours;
+    return sum;
+  }, 0);
+  const certsEarned = allSkills.filter(
+    (s) => s.skillType === "certification" && s.status === "earned",
+  ).length;
+  const activeBuilds = allSkills.filter(
+    (s) => s.skillType === "build" && s.status !== "complete",
+  ).length;
 
   // Per-application note about incomplete requirements, surfaced on the
   // dashboard only for deadlines within the next 14 days.
@@ -330,6 +362,38 @@ export default async function DashboardPage() {
                 </span>
               );
             })}
+          </div>
+        </Link>
+
+        {/* Learning widget */}
+        <Link
+          href="/learning"
+          className="mb-10 flex flex-wrap items-center gap-4 rounded-2xl border border-sage/30 border-l-[3px] border-l-rose bg-white p-5 shadow-soft transition-shadow hover:shadow-md"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose text-cream">
+            <BookIcon className="size-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-forest">Learning</p>
+            <p className="mt-0.5 text-sm text-sage-deep">
+              Skill development in progress
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-full bg-honey-mist px-3 py-1 text-xs font-medium text-honey">
+              <span className="font-semibold tabular-nums">
+                {learningHoursThisMonth}
+              </span>
+              hrs this month
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-moss-mist px-3 py-1 text-xs font-medium text-moss">
+              <span className="font-semibold tabular-nums">{certsEarned}</span>
+              certs earned
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-blush px-3 py-1 text-xs font-medium text-rose-deep">
+              <span className="font-semibold tabular-nums">{activeBuilds}</span>
+              active build{activeBuilds === 1 ? "" : "s"}
+            </span>
           </div>
         </Link>
 

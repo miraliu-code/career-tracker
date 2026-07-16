@@ -172,6 +172,55 @@ export const badgesEarned = pgTable("badges_earned", {
   earnedAt: timestamp("earned_at").defaultNow(),
 });
 
+// Skill development tracked on the Learning tab. `skillType` decides which
+// fields matter: builds use hours/target_hours, certifications use
+// completed_at, habits accumulate hours with no completion state.
+export const skills = pgTable("skills", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  section: text("section", {
+    enum: [
+      "financial_modeling",
+      "consulting_cases",
+      "ai_fluency",
+      "marketing_analytics",
+      "data_viz_bi",
+      "pr_comms",
+      "project_management",
+      "mandarin",
+      "additional",
+    ],
+  }).notNull(),
+  skillType: text("skill_type", {
+    enum: ["build", "certification", "habit"],
+  }).notNull(),
+  learningNotes: text("learning_notes"),
+  proof: text("proof"),
+  proofUrl: text("proof_url"),
+  // Meaning depends on skillType: builds not_started/in_progress/
+  // interview_ready/complete; certifications not_started/in_progress/earned;
+  // habits active/paused.
+  status: text("status"),
+  hoursLogged: integer("hours_logged").default(0).notNull(),
+  targetHours: integer("target_hours"),
+  completedAt: date("completed_at"),
+  resources: text("resources"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Individual time increments logged against a skill, so hours accumulate with
+// dates rather than only as a running total on the skill row.
+export const skillHoursLog = pgTable("skill_hours_log", {
+  id: serial("id").primaryKey(),
+  skillId: integer("skill_id")
+    .notNull()
+    .references(() => skills.id, { onDelete: "cascade" }),
+  hours: integer("hours").notNull(),
+  loggedOn: date("logged_on").defaultNow(),
+  note: text("note"),
+});
+
 export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
 export type Application = typeof applications.$inferSelect;
@@ -190,3 +239,6 @@ export type AlertFinding = typeof alertFindings.$inferSelect;
 export type NewAlertFinding = typeof alertFindings.$inferInsert;
 export type SystemStatus = typeof systemStatus.$inferSelect;
 export type BadgeEarned = typeof badgesEarned.$inferSelect;
+export type Skill = typeof skills.$inferSelect;
+export type NewSkill = typeof skills.$inferInsert;
+export type SkillHoursLogEntry = typeof skillHoursLog.$inferSelect;

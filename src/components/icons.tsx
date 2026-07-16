@@ -206,3 +206,13 @@ export function ShieldIcon({ className }: { className?: string }) {
     </Icon>
   );
 }
+
+/** Open book — Learning */
+export function BookIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 6c-1.8-1.3-4-2-7-2v13c3 0 5.2.7 7 2 1.8-1.3 4-2 7-2V4c-3 0-5.2.7-7 2z" />
+      <path d="M12 6v13" />
+    </Icon>
+  );
+}

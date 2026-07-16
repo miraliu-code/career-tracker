@@ -10,7 +10,8 @@ export type CompanionEntity =
   | "application"
   | "contact"
   | "funding program"
-  | "event";
+  | "event"
+  | "skill";
 
 export type CompanionReaction =
   | { kind: "celebrate" }

@@ -79,7 +79,7 @@ export function companionLine(
 /** A brief mascot-voiced confirmation after creating something. */
 export function confirmationLine(
   mascot: MascotName,
-  entity: "application" | "contact" | "funding program" | "event",
+  entity: "application" | "contact" | "funding program" | "event" | "skill",
 ): string {
   if (mascot === "Skunk") {
     return `${entity} logged. Nice and easy.`;

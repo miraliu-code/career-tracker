@@ -28,8 +28,11 @@ export async function putResume(
 
   if (blobConfigured()) {
     const { put } = await import("@vercel/blob");
+    // The store is configured for private access; resumes must not be readable
+    // by plain URL. Reading back happens through readResume() (see the
+    // /api/resume route), which authenticates with the token.
     const blob = await put(key, bytes, {
-      access: "public",
+      access: "private",
       contentType: "application/pdf",
     });
     return { url: blob.url, filename };
@@ -54,6 +57,52 @@ export async function putResume(
   const name = safeName(filename);
   await writeFile(path.join(dir, name), bytes);
   return { url: `/uploads/resumes/${name}`, filename };
+}
+
+export type ResumeContent = {
+  body: ReadableStream<Uint8Array>;
+  contentType: string;
+};
+
+/**
+ * Read a stored resume for streaming back to the browser. Private blobs are
+ * fetched with the read-write token (they aren't accessible by plain URL);
+ * local-dev fallback files are read from disk. Returns null if the resume
+ * can't be found.
+ */
+export async function readResume(url: string): Promise<ResumeContent | null> {
+  if (/^https?:\/\//.test(url)) {
+    if (!blobConfigured()) return null;
+    const { get } = await import("@vercel/blob");
+    const result = await get(url, { access: "private" });
+    if (!result || result.statusCode !== 200) return null;
+    return {
+      body: result.stream,
+      contentType: result.blob.contentType || "application/pdf",
+    };
+  }
+
+  if (url.startsWith("/uploads/")) {
+    const { readFile } = await import("node:fs/promises");
+    const path = await import("node:path");
+    const abs = path.join(process.cwd(), "public", url.replace(/^\//, ""));
+    try {
+      const buf = await readFile(abs);
+      const bytes = new Uint8Array(buf.length);
+      bytes.set(buf);
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(bytes);
+          controller.close();
+        },
+      });
+      return { body, contentType: "application/pdf" };
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
 }
 
 export async function deleteResume(url: string | null): Promise<void> {

@@ -4,6 +4,7 @@ import { useRef, useState, useTransition } from "react";
 
 import { LABEL_CLASSES } from "@/components/form";
 import { PdfIcon } from "@/components/icons";
+import { resumeHref } from "@/lib/resume-href";
 
 import { discardResume, uploadResume } from "./resume-actions";
 
@@ -93,7 +94,7 @@ export function ResumeUpload({
         <div className="flex flex-wrap items-center gap-2 rounded-xl border border-sage/40 bg-white px-3 py-2">
           <PdfIcon className="size-4 shrink-0 text-rose" />
           <a
-            href={url}
+            href={resumeHref(url)}
             target="_blank"
             rel="noopener noreferrer"
             className="min-w-0 flex-1 truncate text-sm font-medium text-forest hover:text-rose hover:underline"
